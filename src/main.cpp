@@ -58,6 +58,8 @@ void setup() {
 
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
+
+  Serial.println("Setup complete");
 }
 
 void loop() {
