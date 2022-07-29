@@ -6,6 +6,7 @@
 
 const int stepsPerRevolution = 2048;
 enum class RotorState { UP, STOP, DOWN };
+RotorState rotorState = RotorState::STOP;
 
 #define IN1 13
 #define IN2 12
@@ -14,6 +15,30 @@ enum class RotorState { UP, STOP, DOWN };
 
 #define SERVICE_UUID        "eda3620e-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_UUID "f67783e2-0e6a-11ed-861d-0242ac120002"
+
+class MyCallbacks: public BLECharacteristicCallbacks {
+    void onWrite(BLECharacteristic *pCharacteristic) {
+      std::string value = pCharacteristic->getValue();
+
+      if (value.length() == 1) {
+        if(value == "U" && rotorState == RotorState::STOP) {
+          rotorState = RotorState::UP;
+        } else if(value == "S" && rotorState != RotorState::STOP) {
+          rotorState = RotorState::STOP;
+        } else if(value == "D" && rotorState == RotorState::STOP) {
+          rotorState = RotorState::DOWN;
+        }
+      } else if (value.length() > 1) {
+        Serial.println("*********");
+        Serial.print("New value: ");
+        for (int i = 0; i < value.length(); i++)
+          Serial.print(value[i]);
+
+        Serial.println();
+        Serial.println("*********");
+      }
+    }
+};
 
 Stepper myStepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
 
