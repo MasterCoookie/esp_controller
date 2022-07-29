@@ -46,8 +46,20 @@ void setup() {
   myStepper.setSpeed(17);
   // initialize the serial port
   Serial.begin(115200);
+
+  BLEDevice::init("MyESP32");
+  BLEServer *pServer = BLEDevice::createServer();
+
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  BLECharacteristic *pCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_WRITE);
+  pCharacteristic->setCallbacks(new MyCallbacks());
+  pService->start();
+
+  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising->start();
 }
 
 void loop() {
-
+  
 }
