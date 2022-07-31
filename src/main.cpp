@@ -15,35 +15,45 @@ RotorState rotorState = RotorState::STOP;
 
 #define SERVICE_UUID        "eda3620e-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_UUID "f67783e2-0e6a-11ed-861d-0242ac120002"
+#define CHARACTERISTIC_2_UUID "2250634e-8aa7-4e3e-b3a1-31d4bbe40127"
 
-class MyCallbacks: public BLECharacteristicCallbacks {
-    void onWrite(BLECharacteristic *pCharacteristic) {
-      std::string value = pCharacteristic->getValue();
+class RemoteCallback: public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    std::string value = pCharacteristic->getValue();
 
-      if (value.length() == 1) {
-        if(value == "U" && rotorState == RotorState::STOP) {
-          rotorState = RotorState::UP;
-        } else if(value == "S" && rotorState != RotorState::STOP) {
-          rotorState = RotorState::STOP;
-        } else if(value == "D" && rotorState == RotorState::STOP) {
-          rotorState = RotorState::DOWN;
-        }
-      } else if (value.length() > 1) {
-        Serial.println("*********");
-        Serial.print("New value: ");
-        for (int i = 0; i < value.length(); i++)
-          Serial.print(value[i]);
-
-        Serial.println();
-        Serial.println("*********");
+    if (value.length() == 1) {
+      if(value == "U" && rotorState == RotorState::STOP) {
+        rotorState = RotorState::UP;
+      } else if(value == "S" && rotorState != RotorState::STOP) {
+        rotorState = RotorState::STOP;
+      } else if(value == "D" && rotorState == RotorState::STOP) {
+        rotorState = RotorState::DOWN;
       }
+      Serial.print(value[0]);
+    } else if (value.length() > 1) {
+      Serial.println("*********");
+      Serial.print("New value: ");
+      for (int i = 0; i < value.length(); i++)
+        Serial.print(value[i]);
+
+      Serial.println();
+      Serial.println("*********");
     }
+  }
+};
+
+class SetupCallback: public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    std::string value = pCharacteristic->getValue();
+    int speed = std::stoi(value);
+    Serial.println(speed);
+  }
 };
 
 Stepper myStepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
 
 void setup() {
-  myStepper.setSpeed(17);
+  myStepper.setSpeed(34);
   // initialize the serial port
   Serial.begin(115200);
 
@@ -53,7 +63,10 @@ void setup() {
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
   BLECharacteristic *pCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_WRITE);
-  pCharacteristic->setCallbacks(new MyCallbacks());
+  BLECharacteristic *pCharacteristic2 = pService->createCharacteristic(CHARACTERISTIC_2_UUID, BLECharacteristic::PROPERTY_WRITE);
+  pCharacteristic->setCallbacks(new RemoteCallback());
+  pCharacteristic2->setCallbacks(new SetupCallback());
+
   pService->start();
 
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
