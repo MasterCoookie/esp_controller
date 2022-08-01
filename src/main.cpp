@@ -29,7 +29,6 @@ class RemoteCallback: public BLECharacteristicCallbacks {
       } else if(value == "D" && rotorState == RotorState::STOP) {
         rotorState = RotorState::DOWN;
       }
-      Serial.print(value[0]);
     } else if (value.length() > 1) {
       Serial.println("*********");
       Serial.print("New value: ");
@@ -42,6 +41,8 @@ class RemoteCallback: public BLECharacteristicCallbacks {
   }
 };
 
+Stepper myStepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
+
 class SetupCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
@@ -53,7 +54,7 @@ class SetupCallback: public BLECharacteristicCallbacks {
   }
 };
 
-Stepper myStepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
+
 
 void setup() {
   myStepper.setSpeed(34);
@@ -82,10 +83,10 @@ void loop() {
   if(rotorState == RotorState::STOP) {
     delay(100);
   } else if(rotorState == RotorState::UP){
-    myStepper.step(50);
+    myStepper.step(200);
     delay(10);
   } else if(rotorState == RotorState::DOWN){
-    myStepper.step(-50);
+    myStepper.step(-200);
     delay(10);
   }
 }
