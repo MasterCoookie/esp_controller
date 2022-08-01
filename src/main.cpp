@@ -60,7 +60,7 @@ class SetupCallback: public BLECharacteristicCallbacks {
 
 
 void setup() {
-  myStepper.setSpeed(34);
+  myStepper.setSpeed(25);
   // initialize the serial port
   Serial.begin(115200);
 
