@@ -46,7 +46,10 @@ class SetupCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
     int speed = std::stoi(value);
-    Serial.println(speed);
+    Serial.println("Speed change reqested:");
+    Serial.print(speed);
+    Serial.println(" rpm");
+    myStepper.setSpeed(speed);
   }
 };
 
