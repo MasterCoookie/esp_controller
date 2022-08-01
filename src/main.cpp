@@ -24,10 +24,13 @@ class RemoteCallback: public BLECharacteristicCallbacks {
     if (value.length() == 1) {
       if(value == "U" && rotorState == RotorState::STOP) {
         rotorState = RotorState::UP;
+        Serial.println("Going UP");
       } else if(value == "S" && rotorState != RotorState::STOP) {
         rotorState = RotorState::STOP;
+        Serial.println("STOPPING");
       } else if(value == "D" && rotorState == RotorState::STOP) {
         rotorState = RotorState::DOWN;
+        Serial.println("Going DOWN");
       }
     } else if (value.length() > 1) {
       Serial.println("*********");
@@ -83,10 +86,10 @@ void loop() {
   if(rotorState == RotorState::STOP) {
     delay(100);
   } else if(rotorState == RotorState::UP){
-    myStepper.step(200);
+    myStepper.step(150);
     delay(10);
   } else if(rotorState == RotorState::DOWN){
-    myStepper.step(-200);
+    myStepper.step(-150);
     delay(10);
   }
 }
