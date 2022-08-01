@@ -87,9 +87,7 @@ void loop() {
     delay(100);
   } else if(rotorState == RotorState::UP){
     myStepper.step(150);
-    delay(10);
   } else if(rotorState == RotorState::DOWN){
     myStepper.step(-150);
-    delay(10);
   }
 }
