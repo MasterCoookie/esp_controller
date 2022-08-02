@@ -23,6 +23,7 @@ RotorState rotorState = RotorState::STOP;
 #define IN3 14
 #define IN4 27
 
+AsyncWebServer server(80);
 
 #define SERVICE_UUID        "eda3620e-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_UUID "f67783e2-0e6a-11ed-861d-0242ac120002"
