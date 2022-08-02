@@ -149,7 +149,7 @@ void setup() {
   WebSerial.msgCallback(recvMsg);
   server.begin();
 
-  Serial.println("Setup complete");
+  WebSerial.println("Setup complete");
 }
 
 void loop() {
@@ -157,7 +157,6 @@ void loop() {
 
   if(rotorState == RotorState::STOP) {
     delay(100);
-    WebSerial.println("Hello!");
   } else if(rotorState == RotorState::UP){
     myStepper.step(150);
   } else if(rotorState == RotorState::DOWN){
