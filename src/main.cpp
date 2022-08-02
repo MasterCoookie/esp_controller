@@ -36,22 +36,32 @@ class RemoteCallback: public BLECharacteristicCallbacks {
     if (value.length() == 1) {
       if(value == "U" && rotorState == RotorState::STOP) {
         rotorState = RotorState::UP;
+        WebSerial.println("Going UP");
         Serial.println("Going UP");
       } else if(value == "S" && rotorState != RotorState::STOP) {
         rotorState = RotorState::STOP;
         Serial.println("STOPPING");
+        WebSerial.println("STOPPING");
       } else if(value == "D" && rotorState == RotorState::STOP) {
         rotorState = RotorState::DOWN;
         Serial.println("Going DOWN");
+        WebSerial.println("Going DOWN");
       }
     } else if (value.length() > 1) {
       Serial.println("*********");
       Serial.print("New value: ");
-      for (int i = 0; i < value.length(); i++)
+      WebSerial.println("*********");
+      WebSerial.print("New value: ");
+      for (int i = 0; i < value.length(); i++) {
         Serial.print(value[i]);
+        WebSerial.print(value[i]);
+      }
+        
 
       Serial.println();
       Serial.println("*********");
+      WebSerial.println();
+      WebSerial.println("*********");
     }
   }
 };
