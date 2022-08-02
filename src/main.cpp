@@ -7,6 +7,9 @@
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <WebSerial.h>
 
 const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
@@ -19,6 +22,7 @@ RotorState rotorState = RotorState::STOP;
 #define IN2 12
 #define IN3 14
 #define IN4 27
+
 
 #define SERVICE_UUID        "eda3620e-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_UUID "f67783e2-0e6a-11ed-861d-0242ac120002"
