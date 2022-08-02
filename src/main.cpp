@@ -68,6 +68,13 @@ class SetupCallback: public BLECharacteristicCallbacks {
   }
 };
 
+void recvMsg(uint8_t *data, size_t len){
+  WebSerial.println("Received Data...");
+  String d = "";
+  for(int i=0; i < len; i++){
+    d += char(data[i]);
+  }
+}
 
 
 void setup() {
@@ -136,6 +143,11 @@ void setup() {
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
+  // WebSerial is accessible at "<IP Address>/webserial" in browser
+  WebSerial.begin(&server);
+  WebSerial.msgCallback(recvMsg);
+  server.begin();
+
   Serial.println("Setup complete");
 }
 
@@ -144,6 +156,7 @@ void loop() {
 
   if(rotorState == RotorState::STOP) {
     delay(100);
+    WebSerial.println("Hello!");
   } else if(rotorState == RotorState::UP){
     myStepper.step(150);
   } else if(rotorState == RotorState::DOWN){
