@@ -15,7 +15,7 @@ const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
 
 const int stepsPerRevolution = 2048;
-enum class RotorState { UP, STOP, DOWN, OPEN };
+enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
 RotorState rotorState = RotorState::STOP;
 
 #define IN1 13
@@ -28,6 +28,9 @@ AsyncWebServer server(80);
 #define SERVICE_UUID          "eda3620e-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_UUID   "f67783e2-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_2_UUID "2250634e-8aa7-4e3e-b3a1-31d4bbe40127"
+
+//TMP
+int YPosClosed = 6000;
 
 int currentYPos = 0;
 #define STEP 150
@@ -54,6 +57,10 @@ class RemoteCallback: public BLECharacteristicCallbacks {
         rotorState = RotorState::OPEN;
         Serial.println("Opening");
         WebSerial.println("Opening");
+      } else if(value == "C") {
+        rotorState = RotorState::CLOSE;
+        Serial.println("Closing");
+        WebSerial.println("Closing");
       }
     } else if (value.length() > 1) {
       Serial.println("*********");
@@ -195,5 +202,8 @@ void loop() {
   } else if(rotorState == RotorState::OPEN) {
     myStepper.step(-currentYPos);
     currentYPos = 0;
+  } else if(rotorState == RotorState::CLOSE) {
+    myStepper.step(YPosClosed - currentYPos);
+    currentYPos = YPosClosed;
   }
 }
