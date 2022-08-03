@@ -15,7 +15,7 @@ const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
 
 const int stepsPerRevolution = 2048;
-enum class RotorState { UP, STOP, DOWN };
+enum class RotorState { UP, STOP, DOWN, OPEN };
 RotorState rotorState = RotorState::STOP;
 
 #define IN1 13
@@ -50,6 +50,10 @@ class RemoteCallback: public BLECharacteristicCallbacks {
         rotorState = RotorState::DOWN;
         Serial.println("Going DOWN");
         WebSerial.println("Going DOWN");
+      } else if(value == "O") {
+        rotorState = RotorState::OPEN;
+        Serial.println("Opening");
+        WebSerial.println("Opening");
       }
     } else if (value.length() > 1) {
       Serial.println("*********");
@@ -188,5 +192,8 @@ void loop() {
     WebSerial.println(currentYPos);
     currentYPos += STEP;
     myStepper.step(STEP);
+  } else if(rotorState == RotorState::OPEN) {
+    myStepper.step(-currentYPos);
+    currentYPos = 0;
   }
 }
