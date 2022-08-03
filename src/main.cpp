@@ -54,6 +54,7 @@ class RemoteCallback: public BLECharacteristicCallbacks {
       WebSerial.print("New value: ");
       for (int i = 0; i < value.length(); i++) {
         Serial.print(value[i]);
+        //char val = value[i] + '0';
         WebSerial.print(value[i]);
       }
         
@@ -73,8 +74,11 @@ class SetupCallback: public BLECharacteristicCallbacks {
     std::string value = pCharacteristic->getValue();
     int speed = std::stoi(value);
     Serial.println("Speed change reqested:");
+    WebSerial.println("Speed change reqested:");
     Serial.print(speed);
+    WebSerial.print(speed);
     Serial.println(" rpm");
+    WebSerial.println(" rpm");
     myStepper.setSpeed(speed);
   }
 };
