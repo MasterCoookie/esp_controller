@@ -25,15 +25,19 @@ RotorState rotorState = RotorState::STOP;
 
 AsyncWebServer server(80);
 
-#define SERVICE_UUID        "eda3620e-0e6a-11ed-861d-0242ac120002"
-#define CHARACTERISTIC_UUID "f67783e2-0e6a-11ed-861d-0242ac120002"
+#define SERVICE_UUID          "eda3620e-0e6a-11ed-861d-0242ac120002"
+#define CHARACTERISTIC_UUID   "f67783e2-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_2_UUID "2250634e-8aa7-4e3e-b3a1-31d4bbe40127"
+
+int currentYPos = 0;
+#define STEP 150
 
 class RemoteCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
 
     if (value.length() == 1) {
+      //TODO: Allow to go event if negative when doing calibration
       if(value == "U" && rotorState == RotorState::STOP) {
         rotorState = RotorState::UP;
         WebSerial.println("Going UP");
@@ -54,7 +58,6 @@ class RemoteCallback: public BLECharacteristicCallbacks {
       WebSerial.print("New value: ");
       for (int i = 0; i < value.length(); i++) {
         Serial.print(value[i]);
-        //char val = value[i] + '0';
         WebSerial.print(value[i]);
       }
         
@@ -171,9 +174,19 @@ void loop() {
 
   if(rotorState == RotorState::STOP) {
     delay(100);
-  } else if(rotorState == RotorState::UP){
-    myStepper.step(150);
-  } else if(rotorState == RotorState::DOWN){
-    myStepper.step(-150);
+  } else if(rotorState == RotorState::UP) {
+    if(currentYPos > 0) {
+      currentYPos -= STEP;
+      myStepper.step(-STEP);
+    } else {
+      currentYPos = 0;
+      rotorState = RotorState::STOP;
+    }
+    WebSerial.println(currentYPos);
+    
+  } else if(rotorState == RotorState::DOWN) {
+    WebSerial.println(currentYPos);
+    currentYPos += STEP;
+    myStepper.step(STEP);
   }
 }
