@@ -97,7 +97,10 @@ class SetupCallback: public BLECharacteristicCallbacks {
         //set current pos as upper limit
         currentYPos = 0;
       } else if(value == "C") {
-        
+        //set current pos as lower limit (closed)
+        if(currentYPos > 0) {
+          YPosClosed = currentYPos;
+        }
       }
     } else {
       int speed = std::stoi(value);
