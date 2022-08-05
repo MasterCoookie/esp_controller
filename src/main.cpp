@@ -11,6 +11,7 @@
 #include <ESPAsyncWebServer.h>
 #include <WebSerial.h>
 
+//TMP
 const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
 
@@ -72,7 +73,6 @@ class RemoteCallback: public BLECharacteristicCallbacks {
         WebSerial.print(value[i]);
       }
         
-
       Serial.println();
       Serial.println("*********");
       WebSerial.println();
@@ -104,6 +104,7 @@ class SetupCallback: public BLECharacteristicCallbacks {
         }
       }
     } else {
+      //handling speed change request
       int speed = std::stoi(value);
       Serial.println("Speed change reqested:");
       WebSerial.println("Speed change reqested:");
@@ -111,6 +112,7 @@ class SetupCallback: public BLECharacteristicCallbacks {
       WebSerial.print(speed);
       Serial.println(" rpm");
       WebSerial.println(" rpm");
+
       myStepper.setSpeed(speed);
     }
   }
@@ -126,7 +128,7 @@ void recvMsg(uint8_t *data, size_t len){
 
 
 void setup() {
-  myStepper.setSpeed(25);
+  myStepper.setSpeed(24);
   // initialize the serial port
   Serial.begin(115200);
 
@@ -203,11 +205,13 @@ void loop() {
   ArduinoOTA.handle();
 
   if(rotorState == RotorState::STOP) {
+    //quit config mode whenever rotor stops
     if(configMode) {
       configMode = false;
     }
     delay(100);
   } else if(rotorState == RotorState::UP) {
+    //stop at limit, unless in config mode
     if(currentYPos > 0 || configMode) {
       currentYPos -= STEP;
       myStepper.step(-STEP);
