@@ -87,6 +87,7 @@ class SetupCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
     if (value.length() == 1) {
+      configMode = true;
       if(value == "U" && rotorState == RotorState::STOP) {
         rotorState = RotorState::UP;
       } else if(value == "S" && rotorState != RotorState::STOP) {
