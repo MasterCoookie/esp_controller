@@ -33,14 +33,14 @@ AsyncWebServer server(80);
 int YPosClosed = 6000;
 
 int currentYPos = 0;
+bool configMode = false;
 #define STEP 150
 
 class RemoteCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
-
     if (value.length() == 1) {
-      //TODO: Allow to go event if negative when doing calibration
+      configMode = false;
       if(value == "U" && rotorState == RotorState::STOP) {
         rotorState = RotorState::UP;
         WebSerial.println("Going UP");
@@ -86,14 +86,18 @@ Stepper myStepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
 class SetupCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
-    int speed = std::stoi(value);
-    Serial.println("Speed change reqested:");
-    WebSerial.println("Speed change reqested:");
-    Serial.print(speed);
-    WebSerial.print(speed);
-    Serial.println(" rpm");
-    WebSerial.println(" rpm");
-    myStepper.setSpeed(speed);
+    if (value.length() == 1) {
+      configMode = true;
+    } else {
+      int speed = std::stoi(value);
+      Serial.println("Speed change reqested:");
+      WebSerial.println("Speed change reqested:");
+      Serial.print(speed);
+      WebSerial.print(speed);
+      Serial.println(" rpm");
+      WebSerial.println(" rpm");
+      myStepper.setSpeed(speed);
+    }
   }
 };
 
@@ -184,9 +188,12 @@ void loop() {
   ArduinoOTA.handle();
 
   if(rotorState == RotorState::STOP) {
+    if(configMode) {
+      configMode = false;
+    }
     delay(100);
   } else if(rotorState == RotorState::UP) {
-    if(currentYPos > 0) {
+    if(currentYPos > 0 || configMode) {
       currentYPos -= STEP;
       myStepper.step(-STEP);
     } else {
