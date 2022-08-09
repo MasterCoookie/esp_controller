@@ -1,15 +1,15 @@
 #include "SetupCallback.h"
 
-// void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
+// void SetupCallback::onWrite(BLECharacteristic *pCharacteristic, Curtain* curtain) {
 //     std::string value = pCharacteristic->getValue();
 //     if (value.length() == 1) {
 //       configMode = true;
-//       if(value == "U" && rotorState == RotorState::STOP) {
-//         rotorState = RotorState::UP;
-//       } else if(value == "S" && rotorState != RotorState::STOP) {
-//         rotorState = RotorState::STOP;
-//       } else if(value == "D" && rotorState == RotorState::STOP) {
-//         rotorState = RotorState::DOWN;
+//       if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
+//         curtain->setRotorState(RotorState::UP);
+//       } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
+//         curtain->setRotorState(RotorState::STOP);
+//       } else if(value == "D" && curtain->getRotorState() == RotorState::STOP) {
+//         curtain->setRotorState(RotorState::DOWN);
 //       } else if(value == "O") {
 //         //set current pos as upper limit
 //         currentYPos = 0;
@@ -29,6 +29,6 @@
 //       Serial.println(" rpm");
 //       WebSerial.println(" rpm");
 
-//       myStepper.setSpeed(speed);
+//       curtain->setStepperSpeed(speed);
 //     }
 // }

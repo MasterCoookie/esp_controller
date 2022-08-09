@@ -8,7 +8,6 @@
 #include <WebSerial.h>
 
 #include "SetupCallback.h"
-#include "Curtain.h"
 
 //TMP
 const char* ssid = "Maszt 5G test 300% mocy";
@@ -23,18 +22,14 @@ AsyncWebServer server(80);
 #define CHARACTERISTIC_UUID   "f67783e2-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_2_UUID "2250634e-8aa7-4e3e-b3a1-31d4bbe40127"
 
-//TMP
-int YPosClosed = 6000;
-
-int currentYPos = 0;
-bool configMode = false;
 #define STEP 150
+
 
 class RemoteCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
     if (value.length() == 1) {
-      configMode = false;
+      curtain->setConfigMode(false);
       if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
         curtain->setRotorState(RotorState::UP);
         WebSerial.println("Going UP");
@@ -80,7 +75,7 @@ class SetupCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
     std::string value = pCharacteristic->getValue();
     if (value.length() == 1) {
-      configMode = true;
+      curtain->setConfigMode(true);
       if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
         curtain->setRotorState(RotorState::UP);
       } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
@@ -89,11 +84,11 @@ class SetupCallback: public BLECharacteristicCallbacks {
         curtain->setRotorState(RotorState::DOWN);
       } else if(value == "O") {
         //set current pos as upper limit
-        currentYPos = 0;
+        curtain->resetCurrentYPos();
       } else if(value == "C") {
         //set current pos as lower limit (closed)
-        if(currentYPos > 0) {
-          YPosClosed = currentYPos;
+        if(curtain->getCurrentYPos() > 0) {
+          curtain->setYPosClosed(curtain->getCurrentYPos());
         }
       }
     } else {
@@ -199,30 +194,30 @@ void loop() {
 
   if(curtain->getRotorState() == RotorState::STOP) {
     //quit config mode whenever rotor stops
-    if(configMode) {
-      configMode = false;
+    if(curtain->getConfigMode()) {
+      curtain->setConfigMode(false);
     }
     delay(100);
   } else if(curtain->getRotorState() == RotorState::UP) {
     //stop at limit, unless in config mode
-    if(currentYPos > 0 || configMode) {
-      currentYPos -= STEP;
+    if(curtain->getCurrentYPos() > 0 || curtain->getConfigMode()) {
+      curtain->incrementYPos(-STEP);
       curtain->stepperStep(-STEP);
     } else {
-      currentYPos = 0;
+      curtain->resetCurrentYPos();
       curtain->setRotorState(RotorState::STOP);
     }
-    WebSerial.println(currentYPos);
+    WebSerial.println(curtain->getCurrentYPos());
     
   } else if(curtain->getRotorState() == RotorState::DOWN) {
-    WebSerial.println(currentYPos);
-    currentYPos += STEP;
+    WebSerial.println(curtain->getCurrentYPos());
+    curtain->incrementYPos(STEP);
     curtain->stepperStep(STEP);
   } else if(curtain->getRotorState() == RotorState::OPEN) {
-    curtain->stepperStep(-currentYPos);
-    currentYPos = 0;
+    curtain->stepperStep(-curtain->getCurrentYPos());
+    curtain->resetCurrentYPos();
   } else if(curtain->getRotorState() == RotorState::CLOSE) {
-    curtain->stepperStep(YPosClosed - currentYPos);
-    currentYPos = YPosClosed;
+    curtain->stepperStep(curtain->getYPosClosed() - curtain->getCurrentYPos());
+    curtain->setCurrentYPos(curtain->getYPosClosed());
   }
 }
