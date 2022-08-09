@@ -81,12 +81,12 @@ class SetupCallback: public BLECharacteristicCallbacks {
     std::string value = pCharacteristic->getValue();
     if (value.length() == 1) {
       configMode = true;
-      if(value == "U" && rotorState == RotorState::STOP) {
-        rotorState = RotorState::UP;
-      } else if(value == "S" && rotorState != RotorState::STOP) {
-        rotorState = RotorState::STOP;
-      } else if(value == "D" && rotorState == RotorState::STOP) {
-        rotorState = RotorState::DOWN;
+      if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
+        curtain->setRotorState(RotorState::UP);
+      } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
+        curtain->setRotorState(RotorState::STOP);
+      } else if(value == "D" && curtain->getRotorState() == RotorState::STOP) {
+        curtain->setRotorState(RotorState::DOWN);
       } else if(value == "O") {
         //set current pos as upper limit
         currentYPos = 0;
@@ -106,7 +106,7 @@ class SetupCallback: public BLECharacteristicCallbacks {
       Serial.println(" rpm");
       WebSerial.println(" rpm");
 
-      myStepper.setSpeed(speed);
+      curtain->setStepperSpeed(speed);
     }
   }
 };
@@ -121,7 +121,7 @@ void recvMsg(uint8_t *data, size_t len){
 
 
 void setup() {
-  myStepper.setSpeed(32);
+  curtain->setStepperSpeed(29);
   // initialize the serial port
   Serial.begin(115200);
 
@@ -197,32 +197,32 @@ void setup() {
 void loop() {
   ArduinoOTA.handle();
 
-  if(rotorState == RotorState::STOP) {
+  if(curtain->getRotorState() == RotorState::STOP) {
     //quit config mode whenever rotor stops
     if(configMode) {
       configMode = false;
     }
     delay(100);
-  } else if(rotorState == RotorState::UP) {
+  } else if(curtain->getRotorState() == RotorState::UP) {
     //stop at limit, unless in config mode
     if(currentYPos > 0 || configMode) {
       currentYPos -= STEP;
-      myStepper.step(-STEP);
+      curtain->stepperStep(-STEP);
     } else {
       currentYPos = 0;
-      rotorState = RotorState::STOP;
+      curtain->setRotorState(RotorState::STOP);
     }
     WebSerial.println(currentYPos);
     
-  } else if(rotorState == RotorState::DOWN) {
+  } else if(curtain->getRotorState() == RotorState::DOWN) {
     WebSerial.println(currentYPos);
     currentYPos += STEP;
-    myStepper.step(STEP);
-  } else if(rotorState == RotorState::OPEN) {
-    myStepper.step(-currentYPos);
+    curtain->stepperStep(STEP);
+  } else if(curtain->getRotorState() == RotorState::OPEN) {
+    curtain->stepperStep(-currentYPos);
     currentYPos = 0;
-  } else if(rotorState == RotorState::CLOSE) {
-    myStepper.step(YPosClosed - currentYPos);
+  } else if(curtain->getRotorState() == RotorState::CLOSE) {
+    curtain->stepperStep(YPosClosed - currentYPos);
     currentYPos = YPosClosed;
   }
 }
