@@ -26,6 +26,8 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
     } else {
       //handling speed change request
       int speed = std::stoi(value);
+      Serial.print("Chnaging speed to");
+      Serial.println(speed);
       this->curtain->setStepperSpeed(speed);
     }
   }

@@ -1,4 +1,5 @@
 #include <Stepper.h>
+#include <Arduino.h>
 
 enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
 
