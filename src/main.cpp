@@ -71,40 +71,40 @@ class RemoteCallback: public BLECharacteristicCallbacks {
 
 
 
-class SetupCallback: public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic) {
-    std::string value = pCharacteristic->getValue();
-    if (value.length() == 1) {
-      curtain->setConfigMode(true);
-      if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
-        curtain->setRotorState(RotorState::UP);
-      } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
-        curtain->setRotorState(RotorState::STOP);
-      } else if(value == "D" && curtain->getRotorState() == RotorState::STOP) {
-        curtain->setRotorState(RotorState::DOWN);
-      } else if(value == "O") {
-        //set current pos as upper limit
-        curtain->resetCurrentYPos();
-      } else if(value == "C") {
-        //set current pos as lower limit (closed)
-        if(curtain->getCurrentYPos() > 0) {
-          curtain->setYPosClosed(curtain->getCurrentYPos());
-        }
-      }
-    } else {
-      //handling speed change request
-      int speed = std::stoi(value);
-      Serial.println("Speed change reqested:");
-      WebSerial.println("Speed change reqested:");
-      Serial.print(speed);
-      WebSerial.print(speed);
-      Serial.println(" rpm");
-      WebSerial.println(" rpm");
+// class SetupCallback: public BLECharacteristicCallbacks {
+//   void onWrite(BLECharacteristic *pCharacteristic) {
+//     std::string value = pCharacteristic->getValue();
+//     if (value.length() == 1) {
+//       curtain->setConfigMode(true);
+//       if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
+//         curtain->setRotorState(RotorState::UP);
+//       } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
+//         curtain->setRotorState(RotorState::STOP);
+//       } else if(value == "D" && curtain->getRotorState() == RotorState::STOP) {
+//         curtain->setRotorState(RotorState::DOWN);
+//       } else if(value == "O") {
+//         //set current pos as upper limit
+//         curtain->resetCurrentYPos();
+//       } else if(value == "C") {
+//         //set current pos as lower limit (closed)
+//         if(curtain->getCurrentYPos() > 0) {
+//           curtain->setYPosClosed(curtain->getCurrentYPos());
+//         }
+//       }
+//     } else {
+//       //handling speed change request
+//       int speed = std::stoi(value);
+//       Serial.println("Speed change reqested:");
+//       WebSerial.println("Speed change reqested:");
+//       Serial.print(speed);
+//       WebSerial.print(speed);
+//       Serial.println(" rpm");
+//       WebSerial.println(" rpm");
 
-      curtain->setStepperSpeed(speed);
-    }
-  }
-};
+//       curtain->setStepperSpeed(speed);
+//     }
+//   }
+// };
 
 void recvMsg(uint8_t *data, size_t len){
   WebSerial.println("Received Data...");
@@ -174,7 +174,7 @@ void setup() {
   BLECharacteristic *pCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_WRITE);
   BLECharacteristic *pCharacteristic2 = pService->createCharacteristic(CHARACTERISTIC_2_UUID, BLECharacteristic::PROPERTY_WRITE);
   pCharacteristic->setCallbacks(new RemoteCallback());
-  pCharacteristic2->setCallbacks(new SetupCallback());
+  pCharacteristic2->setCallbacks(new SetupCallback(curtain));
 
   pService->start();
 

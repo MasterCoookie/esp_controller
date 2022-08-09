@@ -3,7 +3,10 @@
 #include <BLEServer.h>
 #include "Curtain.h"
 
-// class SetupCallback: public BLECharacteristicCallbacks {
-// private:
-//     void onWrite(BLECharacteristic *pCharacteristic, Curtain* curtain);
-// };
+class SetupCallback: public BLECharacteristicCallbacks {
+public:
+    SetupCallback(Curtain* curtain);
+private:
+    Curtain* curtain;
+    void onWrite(BLECharacteristic *pCharacteristic);
+};
