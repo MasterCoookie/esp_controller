@@ -7,6 +7,7 @@
 #include <WebSerial.h>
 
 #include "SetupCallback.h"
+#include "RemoteCallback.h"
 
 //TMP
 const char* ssid = "Maszt 5G test 300% mocy";
@@ -24,49 +25,49 @@ AsyncWebServer server(80);
 #define STEP 150
 
 
-class RemoteCallback: public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *pCharacteristic) {
-    std::string value = pCharacteristic->getValue();
-    if (value.length() == 1) {
-      curtain->setConfigMode(false);
-      if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
-        curtain->setRotorState(RotorState::UP);
-        WebSerial.println("Going UP");
-        Serial.println("Going UP");
-      } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
-        curtain->setRotorState(RotorState::STOP);
-        Serial.println("STOPPING");
-        WebSerial.println("STOPPING");
-      } else if(value == "D" && curtain->getRotorState() == RotorState::STOP) {
-        curtain->setRotorState(RotorState::DOWN);
-        Serial.println("Going DOWN");
-        WebSerial.println("Going DOWN");
-      } else if(value == "O") {
-        curtain->setRotorState(RotorState::OPEN);
-        Serial.println("Opening");
-        WebSerial.println("Opening");
-      } else if(value == "C") {
-        curtain->setRotorState(RotorState::CLOSE);
-        Serial.println("Closing");
-        WebSerial.println("Closing");
-      }
-    } else if (value.length() > 1) {
-      Serial.println("*********");
-      Serial.print("New value: ");
-      WebSerial.println("*********");
-      WebSerial.print("New value: ");
-      for (int i = 0; i < value.length(); i++) {
-        Serial.print(value[i]);
-        WebSerial.print(value[i]);
-      }
+// class RemoteCallback: public BLECharacteristicCallbacks {
+//   void onWrite(BLECharacteristic *pCharacteristic) {
+//     std::string value = pCharacteristic->getValue();
+//     if (value.length() == 1) {
+//       curtain->setConfigMode(false);
+//       if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
+//         curtain->setRotorState(RotorState::UP);
+//         WebSerial.println("Going UP");
+//         Serial.println("Going UP");
+//       } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
+//         curtain->setRotorState(RotorState::STOP);
+//         Serial.println("STOPPING");
+//         WebSerial.println("STOPPING");
+//       } else if(value == "D" && curtain->getRotorState() == RotorState::STOP) {
+//         curtain->setRotorState(RotorState::DOWN);
+//         Serial.println("Going DOWN");
+//         WebSerial.println("Going DOWN");
+//       } else if(value == "O") {
+//         curtain->setRotorState(RotorState::OPEN);
+//         Serial.println("Opening");
+//         WebSerial.println("Opening");
+//       } else if(value == "C") {
+//         curtain->setRotorState(RotorState::CLOSE);
+//         Serial.println("Closing");
+//         WebSerial.println("Closing");
+//       }
+//     } else if (value.length() > 1) {
+//       Serial.println("*********");
+//       Serial.print("New value: ");
+//       WebSerial.println("*********");
+//       WebSerial.print("New value: ");
+//       for (int i = 0; i < value.length(); i++) {
+//         Serial.print(value[i]);
+//         WebSerial.print(value[i]);
+//       }
         
-      Serial.println();
-      Serial.println("*********");
-      WebSerial.println();
-      WebSerial.println("*********");
-    }
-  }
-};
+//       Serial.println();
+//       Serial.println("*********");
+//       WebSerial.println();
+//       WebSerial.println("*********");
+//     }
+//   }
+// };
 
 
 
@@ -172,7 +173,7 @@ void setup() {
 
   BLECharacteristic *pCharacteristic = pService->createCharacteristic(CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_WRITE);
   BLECharacteristic *pCharacteristic2 = pService->createCharacteristic(CHARACTERISTIC_2_UUID, BLECharacteristic::PROPERTY_WRITE);
-  pCharacteristic->setCallbacks(new RemoteCallback());
+  pCharacteristic->setCallbacks(new RemoteCallback(curtain));
   pCharacteristic2->setCallbacks(new SetupCallback(curtain));
 
   pService->start();
