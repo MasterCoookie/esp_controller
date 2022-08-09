@@ -1,8 +1,5 @@
 #include <Arduino.h>
 #include <Stepper.h>
-#include <BLEDevice.h>
-#include <BLEUtils.h>
-#include <BLEServer.h>
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
@@ -11,12 +8,15 @@
 #include <ESPAsyncWebServer.h>
 #include <WebSerial.h>
 
+#include "SetupCallback.h"
+#include "Curtain.h"
+
 //TMP
 const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
 
 const int stepsPerRevolution = 2048;
-enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
+
 RotorState rotorState = RotorState::STOP;
 
 #define IN1 13
