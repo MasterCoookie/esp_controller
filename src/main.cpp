@@ -128,7 +128,7 @@ void recvMsg(uint8_t *data, size_t len){
 
 
 void setup() {
-  myStepper.setSpeed(24);
+  myStepper.setSpeed(32);
   // initialize the serial port
   Serial.begin(115200);
 
