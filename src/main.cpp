@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <Stepper.h>
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
@@ -15,14 +14,8 @@
 const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
 
-const int stepsPerRevolution = 2048;
+Curtain* curtain = new Curtain();
 
-RotorState rotorState = RotorState::STOP;
-
-#define IN1 13
-#define IN2 12
-#define IN3 14
-#define IN4 27
 
 AsyncWebServer server(80);
 
@@ -42,24 +35,24 @@ class RemoteCallback: public BLECharacteristicCallbacks {
     std::string value = pCharacteristic->getValue();
     if (value.length() == 1) {
       configMode = false;
-      if(value == "U" && rotorState == RotorState::STOP) {
-        rotorState = RotorState::UP;
+      if(value == "U" && curtain->getRotorState() == RotorState::STOP) {
+        curtain->setRotorState(RotorState::UP);
         WebSerial.println("Going UP");
         Serial.println("Going UP");
-      } else if(value == "S" && rotorState != RotorState::STOP) {
-        rotorState = RotorState::STOP;
+      } else if(value == "S" && curtain->getRotorState() != RotorState::STOP) {
+        curtain->setRotorState(RotorState::STOP);
         Serial.println("STOPPING");
         WebSerial.println("STOPPING");
-      } else if(value == "D" && rotorState == RotorState::STOP) {
-        rotorState = RotorState::DOWN;
+      } else if(value == "D" && curtain->getRotorState() == RotorState::STOP) {
+        curtain->setRotorState(RotorState::DOWN);
         Serial.println("Going DOWN");
         WebSerial.println("Going DOWN");
       } else if(value == "O") {
-        rotorState = RotorState::OPEN;
+        curtain->setRotorState(RotorState::OPEN);
         Serial.println("Opening");
         WebSerial.println("Opening");
       } else if(value == "C") {
-        rotorState = RotorState::CLOSE;
+        curtain->setRotorState(RotorState::CLOSE);
         Serial.println("Closing");
         WebSerial.println("Closing");
       }
@@ -81,7 +74,7 @@ class RemoteCallback: public BLECharacteristicCallbacks {
   }
 };
 
-Stepper myStepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
+
 
 class SetupCallback: public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic *pCharacteristic) {
