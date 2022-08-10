@@ -50,8 +50,7 @@ void setup() {
   }
 
   //OTA starts
-  ArduinoOTA
-    .onStart([]() {
+  ArduinoOTA.onStart([]() {
       String type;
       if (ArduinoOTA.getCommand() == U_FLASH)
         type = "sketch";
@@ -60,14 +59,11 @@ void setup() {
 
       // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
       Serial.println("Start updating " + type);
-    })
-    .onEnd([]() {
+    }).onEnd([]() {
       Serial.println("\nEnd");
-    })
-    .onProgress([](unsigned int progress, unsigned int total) {
+    }).onProgress([](unsigned int progress, unsigned int total) {
       Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-    })
-    .onError([](ota_error_t error) {
+    }).onError([](ota_error_t error) {
       Serial.printf("Error[%u]: ", error);
       if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
       else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
