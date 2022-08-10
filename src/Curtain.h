@@ -6,7 +6,6 @@ enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
 
 class Curtain {
 public:
-    Curtain();
     const RotorState getRotorState() const { return this->rotorState; }
     void setRotorState(const RotorState state) { this->rotorState = state; }
     void setStepperSpeed(const int speed) { this->stepper->setSpeed(speed); }
@@ -27,6 +26,7 @@ public:
     static Curtain* getInstance();
 
 private:
+    Curtain();
     static Curtain* curtain_;
 
     RotorState rotorState;

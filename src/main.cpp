@@ -13,7 +13,7 @@
 const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
 
-Curtain* curtain = new Curtain();
+Curtain* curtain = Curtain::getInstance();
 
 
 AsyncWebServer server(80);
