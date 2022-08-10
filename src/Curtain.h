@@ -24,7 +24,11 @@ public:
     const int getYPosClosed() const { return this->YPosClosed; }
     void setYPosClosed(const int& y) { this->YPosClosed = y; }
 
+    static Curtain* getInstance();
+
 private:
+    static Curtain* curtain_;
+
     RotorState rotorState;
 
     int YPosClosed;
