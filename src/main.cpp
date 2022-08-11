@@ -13,7 +13,7 @@
 const char* ssid = "Maszt 5G test 300% mocy";
 const char* password = "aqq123321qqa";
 
-Curtain* curtain = Curtain::getInstance();
+Curtain* curtain;
 
 
 AsyncWebServer server(80);
@@ -78,6 +78,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   //OTA ends
+  curtain = Curtain::getInstance();
 
   BLEDevice::init("MyESP32");
   BLEServer *pServer = BLEDevice::createServer();

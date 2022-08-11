@@ -15,16 +15,19 @@ Curtain::Curtain() {
     WiFiClient client;
     HTTPClient http;
 
-    http.begin(client, serverName + "get_device_by_mac");
-    http.addHeader("Content-Type", "application/json");
-    int httpResponseCode = http.POST("{\"MAC\":\"" + this->BLEMAC + "\"}");
+    String url = serverName + "get_device_by_mac";
+    String payload = "{\"MAC\":\"" + this->BLEMAC + "\"}";
+
+    http.begin("http://192.168.0.174:8080/");
+    // http.addHeader("Content-Type", "application/json");
+    int httpResponseCode = http.GET();
     
-    // Send HTTP POST request
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
+    // // Send HTTP POST request
+    // Serial.print("HTTP Response code: ");
+    // Serial.println(httpResponseCode);
     
-    // Free resources
-    http.end();
+    // // Free resources
+    // http.end();
 
 
     this->YPosClosed = 6000;
