@@ -32,7 +32,6 @@ void recvMsg(uint8_t *data, size_t len){
   }
 }
 
-
 void setup() {
   curtain->setStepperSpeed(29);
   // initialize the serial port

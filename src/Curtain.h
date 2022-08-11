@@ -1,6 +1,8 @@
 #pragma once
 #include <Stepper.h>
 #include <Arduino.h>
+#include <HTTPClient.h>
+#include <Arduino_JSON.h>
 
 enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
 
@@ -28,6 +30,9 @@ public:
 private:
     Curtain();
     static Curtain* curtain_;
+
+    String serverName;
+    String BLEMAC;
 
     RotorState rotorState;
 

@@ -8,7 +8,25 @@
 Curtain* Curtain::curtain_ = nullptr;
 
 Curtain::Curtain() {
-    //TMP
+    //TODO: make offline version
+    this->serverName = "http://192.168.0.174:8080/";
+    this->BLEMAC = "0C:B8:15:CA:0B:92";
+
+    WiFiClient client;
+    HTTPClient http;
+
+    http.begin(client, serverName + "get_device_by_mac");
+    http.addHeader("Content-Type", "application/json");
+    int httpResponseCode = http.POST("{\"MAC\":\"" + this->BLEMAC + "\"}");
+    
+    // Send HTTP POST request
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+    
+    // Free resources
+    http.end();
+
+
     this->YPosClosed = 6000;
 
     const int stepsPerRevolution = 2048;
