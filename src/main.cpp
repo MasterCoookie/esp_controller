@@ -33,7 +33,7 @@ void setup() {
 
   //wifi
   Serial.println("Booting");
-  //WiFi.mode(WIFI_STA);
+  WiFi.mode(WIFI_STA);
 
   WiFi.begin(ssid, password);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -41,6 +41,8 @@ void setup() {
     delay(5000);
     ESP.restart();
   }
+  Serial.print("Connected to ");
+  Serial.println(ssid);
 
   //OTA starts
   ArduinoOTA.onStart([]() {
@@ -72,8 +74,8 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   //OTA ends
-  curtain->setStepperSpeed(29);
   curtain = Curtain::getInstance();
+  curtain->setStepperSpeed(29);
 
   BLEDevice::init("MyESP32");
   BLEServer *pServer = BLEDevice::createServer();
@@ -91,6 +93,38 @@ void setup() {
   pAdvertising->start();
 
   Serial.println("Setup complete");
+
+
+  //TMPDev
+  // const char* server_name = "https://esp.requestcatcher.com";
+  const char* server_name = "https://192.168.0.174:8080/";
+
+  WiFiClientSecure client;
+  client.setInsecure();//skip verification
+      if (!client.connect(server_name, 443))
+          Serial.println("Connection failed!");
+      else {
+          Serial.println("Connected to server!");
+          client.println("POST https://192.168.0.174:8080/get_device_by_mac HTTP/1.0");
+          client.println("Dupa: zmitac");
+
+
+          while (client.connected()) {
+          String line = client.readStringUntil('\n');
+          if (line == "\r") {
+              Serial.println("headers received");
+              break;
+          }
+          }
+          // if there are incoming bytes available
+          // from the server, read them and print them:
+          while (client.available()) {
+          char c = client.read();
+          Serial.write(c);
+          }
+
+          client.stop();
+      }
 }
 
 void loop() {
