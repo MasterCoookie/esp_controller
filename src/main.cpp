@@ -1,10 +1,5 @@
-#include <WiFi.h>
-#include <ESPmDNS.h>
-#include <WiFiUdp.h>
+// #include <ESPmDNS.h>
 #include <ArduinoOTA.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
-#include <WebSerial.h>
 
 #include "SetupCallback.h"
 #include "RemoteCallback.h"
@@ -16,7 +11,6 @@ const char* password = "aqq123321qqa";
 Curtain* curtain;
 
 
-AsyncWebServer server(80);
 
 #define SERVICE_UUID          "eda3620e-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_UUID   "f67783e2-0e6a-11ed-861d-0242ac120002"
@@ -24,22 +18,22 @@ AsyncWebServer server(80);
 
 #define STEP 150
 
-void recvMsg(uint8_t *data, size_t len){
-  WebSerial.println("Received Data...");
-  String d = "";
-  for(int i=0; i < len; i++){
-    d += char(data[i]);
-  }
-}
+// void recvMsg(uint8_t *data, size_t len){
+//   WebSerial.println("Received Data...");
+//   String d = "";
+//   for(int i=0; i < len; i++){
+//     d += char(data[i]);
+//   }
+// }
 
 void setup() {
-  curtain->setStepperSpeed(29);
   // initialize the serial port
   Serial.begin(115200);
+  delay(100);
 
   //wifi
   Serial.println("Booting");
-  WiFi.mode(WIFI_STA);
+  //WiFi.mode(WIFI_STA);
 
   WiFi.begin(ssid, password);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -78,6 +72,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   //OTA ends
+  curtain->setStepperSpeed(29);
   curtain = Curtain::getInstance();
 
   BLEDevice::init("MyESP32");
@@ -95,12 +90,7 @@ void setup() {
   BLEAdvertising *pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
-  // WebSerial is accessible at "<IP Address>/webserial" in browser
-  WebSerial.begin(&server);
-  WebSerial.msgCallback(recvMsg);
-  server.begin();
-
-  WebSerial.println("Setup complete");
+  Serial.println("Setup complete");
 }
 
 void loop() {
@@ -121,10 +111,8 @@ void loop() {
       curtain->resetCurrentYPos();
       curtain->setRotorState(RotorState::STOP);
     }
-    WebSerial.println(curtain->getCurrentYPos());
     
   } else if(curtain->getRotorState() == RotorState::DOWN) {
-    WebSerial.println(curtain->getCurrentYPos());
     curtain->incrementYPos(STEP);
     curtain->stepperStep(STEP);
   } else if(curtain->getRotorState() == RotorState::OPEN) {

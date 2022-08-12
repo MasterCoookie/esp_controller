@@ -9,25 +9,43 @@ Curtain* Curtain::curtain_ = nullptr;
 
 Curtain::Curtain() {
     //TODO: make offline version
-    this->serverName = "http://192.168.0.174:8080/";
     this->BLEMAC = "0C:B8:15:CA:0B:92";
 
-    WiFiClient client;
-    HTTPClient http;
+    const char* server_name = "http://192.168.0.174:8080/";
 
-    String url = serverName + "get_device_by_mac";
-    String payload = "{\"MAC\":\"" + this->BLEMAC + "\"}";
+    WiFiClientSecure client;
+    // if (WiFi.waitForConnectResult() = WL_CONNECTED) {
+    //     Serial.println("Not connected");
+    // } else {
 
-    http.begin("http://192.168.0.174:8080/");
-    // http.addHeader("Content-Type", "application/json");
-    int httpResponseCode = http.GET();
     
-    // // Send HTTP POST request
-    // Serial.print("HTTP Response code: ");
-    // Serial.println(httpResponseCode);
-    
-    // // Free resources
-    // http.end();
+
+        client.setInsecure();//skip verification
+        if (!client.connect(server_name, 443))
+            Serial.println("Connection failed!");
+        else {
+            Serial.println("Connected to server!");
+            client.println("POST https://esp.requestcatcher.com/test HTTP/1.0");
+            client.println("Dupa: zmitac");
+
+
+            while (client.connected()) {
+            String line = client.readStringUntil('\n');
+            if (line == "\r") {
+                Serial.println("headers received");
+                break;
+            }
+            }
+            // if there are incoming bytes available
+            // from the server, read them and print them:
+            while (client.available()) {
+            char c = client.read();
+            Serial.write(c);
+            }
+
+            client.stop();
+        }
+    // }
 
 
     this->YPosClosed = 6000;
