@@ -11,18 +11,26 @@ Curtain::Curtain() {
     //TODO: make offline version
     this->BLEMAC = "0C:B8:15:CA:0B:92";
 
-    // const char* server_name = "http://192.168.0.174:8080/";
+    const char* server_name = "http://192.168.0.174:3000/";
 
-    // WiFiClientSecure client;
-    // if (WiFi.waitForConnectResult() = WL_CONNECTED) {
-    //     Serial.println("Not connected");
-    // } else {
-
-    
-
-       
-    // }
-
+    HTTPClient http;
+ 
+    http.begin(server_name); //Specify the URL and certificate
+    int httpCode = http.GET();                                                  //Make the request
+ 
+    if (httpCode > 0) { //Check for the returning code
+ 
+        String payload = http.getString();
+        Serial.println(httpCode);
+        Serial.println(payload);
+      }
+ 
+    else {
+        Serial.println(httpCode);
+        Serial.println("Error on HTTP request");
+    }
+ 
+    http.end(); 
 
     this->YPosClosed = 6000;
 
