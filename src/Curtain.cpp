@@ -11,12 +11,13 @@ Curtain::Curtain() {
     //TODO: make offline version
     this->BLEMAC = "0C:B8:15:CA:0B:92";
 
-    const char* server_name = "http://192.168.0.174:3000/";
+    const char* server_name = "http://192.168.0.174:3000/get_device_by_mac";
 
     HTTPClient http;
+    http.addHeader("Content-Type", "application/json");
  
     http.begin(server_name); //Specify the URL and certificate
-    int httpCode = http.GET();                                                  //Make the request
+    int httpCode = http.POST("\"MAC\": \""+ this->BLEMAC +"\"");                                                  //Make the request
  
     if (httpCode > 0) { //Check for the returning code
  
