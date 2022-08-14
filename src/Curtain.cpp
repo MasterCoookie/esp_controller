@@ -24,6 +24,15 @@ Curtain::Curtain() {
         String payload = http.getString();
         Serial.println(httpCode);
         Serial.println(payload);
+
+        JSONVar json = JSON.parse(payload);
+        if (JSON.typeof(json) == "undefined") {
+            Serial.println("Parsing input failed!");
+        }
+
+
+        //tmp
+        Serial.println(json["device"]["name"]);
       }
  
     else {
