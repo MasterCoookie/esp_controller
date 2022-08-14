@@ -9,7 +9,11 @@ Curtain* Curtain::curtain_ = nullptr;
 
 Curtain::Curtain() {
     //TODO: make offline version
+    //TMP
     this->BLEMAC = "0C:B8:15:CA:0B:92";
+
+    const int stepsPerRevolution = 2048;
+    this->stepper = new Stepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
 
     const char* server_name = "http://192.168.0.174:3000/get_device_by_mac";
 
@@ -28,24 +32,26 @@ Curtain::Curtain() {
         JSONVar json = JSON.parse(payload);
         if (JSON.typeof(json) == "undefined") {
             Serial.println("Parsing input failed!");
+            this->stepper->setSpeed(26);
+            this->YPosClosed = 6000;
+        } else {
+            //tmp
+            Serial.print("Device: ");
+            Serial.println(json["device"]["name"]);
+
+            int speed = (int)json["device"]["motorSpeed"];
+            
+            Serial.print("Speed set to: ");
+            Serial.println(speed);
+            this->stepper->setSpeed(speed);
+            this->YPosClosed = (int)json["device"]["YPosClosed"];
         }
-
-
-        //tmp
-        Serial.println(json["device"]["name"]);
-      }
- 
-    else {
+      } else {
         Serial.println(httpCode);
         Serial.println("Error on HTTP request");
     }
  
     http.end(); 
-
-    this->YPosClosed = 6000;
-
-    const int stepsPerRevolution = 2048;
-    this->stepper = new Stepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
 
     this->rotorState = RotorState::STOP;
     this->currentYPos = 0;
