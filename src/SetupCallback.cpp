@@ -16,12 +16,10 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
         this->curtain->setRotorState(RotorState::DOWN);
       } else if(value == "O") {
         //set current pos as upper limit
+        this->curtain->setYPosClosed(this->curtain->getYPosClosed() - this->curtain->getCurrentYPos());
         this->curtain->resetCurrentYPos();
       } else if(value == "C") {
-        //set current pos as lower limit (closed)
-        if(this->curtain->getCurrentYPos() > 0) {
-          this->curtain->setYPosClosed(this->curtain->getCurrentYPos());
-        }
+        this->curtain->setYPosClosed(this->curtain->getCurrentYPos());
       }
     } else {
       //handling speed change request
