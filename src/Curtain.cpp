@@ -64,3 +64,10 @@ Curtain* Curtain::getInstance() {
     }
     return curtain_;
 }
+
+void Curtain::stepperPowerOff() {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+}

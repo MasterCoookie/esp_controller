@@ -99,6 +99,7 @@ void loop() {
   ArduinoOTA.handle();
 
   if(curtain->getRotorState() == RotorState::STOP) {
+    curtain->stepperPowerOff();
     //quit config mode whenever rotor stops
     if(curtain->getConfigMode()) {
       curtain->setConfigMode(false);
@@ -112,6 +113,7 @@ void loop() {
     } else {
       curtain->resetCurrentYPos();
       curtain->setRotorState(RotorState::STOP);
+      curtain->stepperPowerOff();
     }
     
   } else if(curtain->getRotorState() == RotorState::DOWN) {

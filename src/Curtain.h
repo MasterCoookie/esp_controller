@@ -14,6 +14,7 @@ public:
     void setStepperSpeed(const int speed) { this->stepper->setSpeed(speed); }
 
     void stepperStep(const int& step) { this->stepper->step(step); }
+    void stepperPowerOff();
 
     const bool getConfigMode() const { return this->configMode; }
     void setConfigMode(const bool mode) { this->configMode = mode; }
