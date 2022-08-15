@@ -18,14 +18,6 @@ Curtain* curtain;
 
 #define STEP 150
 
-// void recvMsg(uint8_t *data, size_t len){
-//   WebSerial.println("Received Data...");
-//   String d = "";
-//   for(int i=0; i < len; i++){
-//     d += char(data[i]);
-//   }
-// }
-
 void setup() {
   // initialize the serial port
   Serial.begin(115200);
