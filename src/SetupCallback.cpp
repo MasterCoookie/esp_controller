@@ -33,6 +33,11 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
       } else if(value[0] == 'C') {
         // save user credentials
         //TODO check for faulty declarations
+        if(value.find(" \t ") != std::string::npos) {
+          this->curtain->setOwnerCredentials(value);
+        } else {
+          Serial.println("no separator found");
+        }
         
       }
     }

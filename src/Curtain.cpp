@@ -89,15 +89,17 @@ int Curtain::makeResponselessAPICall(String endpoint, String payload) {
 void Curtain::setOwnerCredentials(const std::string& s) {
     this->ownerEmail = "";
     this->ownerPassword = "";
-    for(int i = 1; i < s.find(" \t "); ++i) {
-        Serial.println(s[i]);
+    size_t separator = s.find(" \t ");
+    Serial.println(separator);
+    for(int i = 1; i < separator; ++i) {
+        // Serial.println(s[i]);
         this->ownerEmail += s[i];
     }
     Serial.println("");
-    for(int i = s.find(" \t "); i < s.length(); ++i) {
-        this->ownerEmail += s[i];
+    for(int i = separator + 3; i < s.length(); ++i) {
+        this->ownerPassword += s[i];
     }
-    Serial.println("");
+    // Serial.println("");
     Serial.println("Done reading");
     Serial.print("email: ");
     Serial.println(this->ownerEmail);
