@@ -71,3 +71,7 @@ void Curtain::stepperPowerOff() {
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
 }
+
+int Curtain::makeResponselessAPICall() {
+    
+}

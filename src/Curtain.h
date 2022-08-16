@@ -27,6 +27,8 @@ public:
     const int getYPosClosed() const { return this->YPosClosed; }
     void setYPosClosed(const int& y) { this->YPosClosed = y; }
 
+    int makeResponselessAPICall();
+
     static Curtain* getInstance();
 
 private:

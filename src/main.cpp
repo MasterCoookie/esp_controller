@@ -10,8 +10,6 @@ const char* password = "aqq123321qqa";
 
 Curtain* curtain;
 
-
-
 #define SERVICE_UUID          "eda3620e-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_UUID   "f67783e2-0e6a-11ed-861d-0242ac120002"
 #define CHARACTERISTIC_2_UUID "2250634e-8aa7-4e3e-b3a1-31d4bbe40127"
