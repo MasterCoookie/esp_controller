@@ -27,7 +27,7 @@ public:
     const int getYPosClosed() const { return this->YPosClosed; }
     void setYPosClosed(const int& y) { this->YPosClosed = y; }
 
-    int makeResponselessAPICall(const char* endpoint, const char* payload);
+    int makeResponselessAPICall(String endpoint, String payload);
 
     static Curtain* getInstance();
 

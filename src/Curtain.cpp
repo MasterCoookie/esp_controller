@@ -15,12 +15,13 @@ Curtain::Curtain() {
     const int stepsPerRevolution = 2048;
     this->stepper = new Stepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
 
-    const char* server_name = "http://192.168.0.174:3000/get_device_by_mac";
+    this->serverName = "http://192.168.0.174:3000/";
+    String endpoint = "get_device_by_mac";
 
     HTTPClient http;
     http.addHeader("Content-Type", "application/json");
  
-    http.begin(server_name); //Specify the URL and certificate
+    http.begin(this->serverName + endpoint); //Specify the URL and certificate
     int httpCode = http.POST("\"MAC\": \""+ this->BLEMAC +"\"");                                                  //Make the request
  
     if (httpCode > 0) { //Check for the returning code
@@ -72,6 +73,6 @@ void Curtain::stepperPowerOff() {
     digitalWrite(IN4, LOW);
 }
 
-int Curtain::makeResponselessAPICall(const char* endpoint, const char* payload) {
+int Curtain::makeResponselessAPICall(String endpoint, String payload) {
 
 }
