@@ -32,9 +32,8 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
         // Serial.println(this->curtain->makeResponselessAPICall("update_device", "dupa"));
       } else if(value[0] == 'C') {
         // save user credentials
-        for (int i = 1; i < value.length(); i++) {
-          Serial.print(value[i]);
-        }
+        //TODO check for faulty declarations
+        
       }
     }
   }

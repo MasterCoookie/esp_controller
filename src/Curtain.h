@@ -29,6 +29,8 @@ public:
 
     int makeResponselessAPICall(String endpoint, String payload);
 
+    void setOwnerCredentials(const std::string& s);
+
     static Curtain* getInstance();
 
 private:
