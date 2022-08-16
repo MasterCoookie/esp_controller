@@ -72,6 +72,6 @@ void Curtain::stepperPowerOff() {
     digitalWrite(IN4, LOW);
 }
 
-int Curtain::makeResponselessAPICall() {
-    
+int Curtain::makeResponselessAPICall(const char* endpoint, const char* payload) {
+
 }
