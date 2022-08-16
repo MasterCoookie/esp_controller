@@ -35,6 +35,9 @@ private:
     Curtain();
     static Curtain* curtain_;
 
+    String ownerEmail;
+    String ownerPassword;
+
     String serverName;
     String BLEMAC;
 

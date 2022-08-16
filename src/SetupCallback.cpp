@@ -21,11 +21,15 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
       } else if(value == "C") {
         this->curtain->setYPosClosed(this->curtain->getCurrentYPos());
       }
-    } else {
-      //handling speed change request
-      int speed = std::stoi(value);
-      Serial.print("Chnaging speed to");
-      Serial.println(speed);
-      this->curtain->setStepperSpeed(speed);
+    } else if (value.length() > 1) {
+      Serial.println(value[0]);
+      if(value[0] == 'S') {
+        //handling speed change request
+        int speed = std::stoi(value.substr(1, value.length()));
+        Serial.print("Chnaging speed to ");
+        Serial.println(speed);
+        this->curtain->setStepperSpeed(speed);
+        // Serial.println(this->curtain->makeResponselessAPICall("update_device", "dupa"));
+      }
     }
   }
