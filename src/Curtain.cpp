@@ -74,5 +74,14 @@ void Curtain::stepperPowerOff() {
 }
 
 int Curtain::makeResponselessAPICall(String endpoint, String payload) {
+    HTTPClient http;
+    http.addHeader("Content-Type", "application/json");
+ 
+    http.begin(this->serverName + endpoint);
+    int httpCode = http.POST(payload);
 
+    if (httpCode < 0) {
+        Serial.println("Error on HTTP request");
+    }
+    return httpCode;
 }
