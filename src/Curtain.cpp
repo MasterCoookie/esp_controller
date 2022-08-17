@@ -22,10 +22,11 @@ Curtain::Curtain() {
     data["MAC"] = this->BLEMAC;
 
     HTTPClient http;
+    http.begin(this->serverName + endpoint);
     http.addHeader("Content-Type", "application/json");
  
-    http.begin(this->serverName + endpoint); //Specify the URL and certificate
-    int httpCode = http.POST(JSON.stringify(data));                                                  //Make the request
+    Serial.println(JSON.stringify(data));
+    int httpCode = http.POST("{\"MAC\":\"0C:B8:15:CA:0B:92\"}");                                                  //Make the request
  
     if (httpCode > 0) { //Check for the returning code
  
