@@ -26,7 +26,7 @@ Curtain::Curtain() {
     http.addHeader("Content-Type", "application/json");
  
     Serial.println(JSON.stringify(data));
-    int httpCode = http.POST("{\"MAC\":\"0C:B8:15:CA:0B:92\"}");                                                  //Make the request
+    int httpCode = http.POST(JSON.stringify(data));                                                  //Make the request
  
     if (httpCode > 0) { //Check for the returning code
  
