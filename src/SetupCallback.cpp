@@ -30,6 +30,10 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
         Serial.println(speed);
         this->curtain->setStepperSpeed(speed);
 
+        //tmp
+        JSONVar json;
+        this->curtain->appendUserAuth(json);
+
         // Serial.println(this->curtain->makeResponselessAPICall("update_device", "dupa"));
       } else if(value[0] == 'C') {
         // save user credentials

@@ -28,6 +28,7 @@ public:
     void setYPosClosed(const int& y) { this->YPosClosed = y; }
 
     int makeResponselessAPICall(const String& endpoint, JSONVar& doc);
+    void appendUserAuth(JSONVar& doc);
 
     void setOwnerCredentials(const std::string& s);
 
@@ -35,8 +36,6 @@ public:
 
 private:
     Curtain();
-
-    void appendUserAuth(JSONVar& doc);
 
     static Curtain* curtain_;
 
