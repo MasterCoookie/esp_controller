@@ -106,3 +106,8 @@ void Curtain::setOwnerCredentials(const std::string& s) {
     Serial.print("password: ");
     Serial.println(this->ownerPassword);
 }
+
+void Curtain::appendUserAuth(JSONVar& doc) {
+    doc["email"] = this->ownerEmail;
+    doc["password"] = this->ownerPassword;
+}

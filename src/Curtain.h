@@ -35,6 +35,9 @@ public:
 
 private:
     Curtain();
+
+    void appendUserAuth(JSONVar& doc);
+
     static Curtain* curtain_;
 
     String ownerEmail;
