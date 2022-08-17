@@ -29,12 +29,12 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
         Serial.print("Chnaging speed to ");
         Serial.println(speed);
         this->curtain->setStepperSpeed(speed);
+  
+        JSONVar payload;
+        payload["motorSpeed"] = speed;
+        this->curtain->appendUserAuth(payload);
 
-        //tmp
-        JSONVar json;
-        this->curtain->appendUserAuth(json);
-
-        // Serial.println(this->curtain->makeResponselessAPICall("update_device", "dupa"));
+        Serial.println(this->curtain->makeResponselessAPICall("update_device/", payload));
       } else if(value[0] == 'C') {
         // save user credentials
         //TODO check for faulty declarations

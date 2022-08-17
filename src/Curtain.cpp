@@ -76,7 +76,10 @@ void Curtain::stepperPowerOff() {
 int Curtain::makeResponselessAPICall(const String& endpoint, JSONVar& doc) {
     HTTPClient http;
     http.addHeader("Content-Type", "application/json");
- 
+    
+    Serial.println("Making http request to "+ this->serverName + endpoint);
+    Serial.println("With data: "+ JSON.stringify(doc));
+
     http.begin(this->serverName + endpoint);
     int httpCode = http.POST(JSON.stringify(doc));
 
@@ -111,5 +114,5 @@ void Curtain::appendUserAuth(JSONVar& doc) {
     doc["email"] = this->ownerEmail;
     doc["password"] = this->ownerPassword;
     //tmp
-    Serial.println(JSON.stringify(doc));
+    // Serial.println(JSON.stringify(doc));
 }
