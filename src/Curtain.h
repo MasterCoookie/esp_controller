@@ -27,7 +27,7 @@ public:
     const int getYPosClosed() const { return this->YPosClosed; }
     void setYPosClosed(const int& y) { this->YPosClosed = y; }
 
-    int makeResponselessAPICall(String endpoint, String payload);
+    int makeResponselessAPICall(const String& endpoint, JSONVar& doc);
 
     void setOwnerCredentials(const std::string& s);
 

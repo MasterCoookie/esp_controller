@@ -29,6 +29,7 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
         Serial.print("Chnaging speed to ");
         Serial.println(speed);
         this->curtain->setStepperSpeed(speed);
+
         // Serial.println(this->curtain->makeResponselessAPICall("update_device", "dupa"));
       } else if(value[0] == 'C') {
         // save user credentials

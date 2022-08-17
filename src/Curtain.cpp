@@ -73,12 +73,12 @@ void Curtain::stepperPowerOff() {
     digitalWrite(IN4, LOW);
 }
 
-int Curtain::makeResponselessAPICall(String endpoint, String payload) {
+int Curtain::makeResponselessAPICall(const String& endpoint, JSONVar& doc) {
     HTTPClient http;
     http.addHeader("Content-Type", "application/json");
  
     http.begin(this->serverName + endpoint);
-    int httpCode = http.POST(payload);
+    int httpCode = http.POST(JSON.stringify(doc));
 
     if (httpCode < 0) {
         Serial.println("Error on HTTP request");
@@ -110,4 +110,6 @@ void Curtain::setOwnerCredentials(const std::string& s) {
 void Curtain::appendUserAuth(JSONVar& doc) {
     doc["email"] = this->ownerEmail;
     doc["password"] = this->ownerPassword;
+    //tmp
+    Serial.println(JSON.stringify(doc));
 }
