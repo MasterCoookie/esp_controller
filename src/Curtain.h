@@ -44,6 +44,7 @@ private:
 
     String serverName;
     String BLEMAC;
+    String deviceID;
 
     RotorState rotorState;
 

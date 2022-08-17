@@ -18,11 +18,14 @@ Curtain::Curtain() {
     this->serverName = "http://192.168.0.174:3000/";
     String endpoint = "get_device_by_mac";
 
+    JSONVar data;
+    data["MAC"] = this->BLEMAC;
+
     HTTPClient http;
     http.addHeader("Content-Type", "application/json");
  
     http.begin(this->serverName + endpoint); //Specify the URL and certificate
-    int httpCode = http.POST("\"MAC\": \""+ this->BLEMAC +"\"");                                                  //Make the request
+    int httpCode = http.POST(JSON.stringify(data));                                                  //Make the request
  
     if (httpCode > 0) { //Check for the returning code
  
@@ -46,6 +49,7 @@ Curtain::Curtain() {
             Serial.println(speed);
             this->stepper->setSpeed(speed);
             this->YPosClosed = (int)json["device"]["YPosClosed"];
+            this->deviceID = json["device"]["_id"];
         }
       } else {
         Serial.println(httpCode);
@@ -113,6 +117,7 @@ void Curtain::setOwnerCredentials(const std::string& s) {
 void Curtain::appendUserAuth(JSONVar& doc) {
     doc["email"] = this->ownerEmail;
     doc["password"] = this->ownerPassword;
+    doc["deviceID"] = this->deviceID;
     //tmp
     // Serial.println(JSON.stringify(doc));
 }
