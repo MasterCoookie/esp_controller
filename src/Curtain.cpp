@@ -80,12 +80,12 @@ void Curtain::stepperPowerOff() {
 
 int Curtain::makeResponselessAPICall(const String& endpoint, JSONVar& doc) {
     HTTPClient http;
-    http.addHeader("Content-Type", "application/json");
     
     Serial.println("Making http request to "+ this->serverName + endpoint);
     Serial.println("With data: "+ JSON.stringify(doc));
 
     http.begin(this->serverName + endpoint);
+    http.addHeader("Content-Type", "application/json");
     int httpCode = http.POST(JSON.stringify(doc));
 
     if (httpCode < 0) {
