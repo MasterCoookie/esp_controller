@@ -120,6 +120,7 @@ JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& doc) 
         }
     } else {
         Serial.println("Code: " + httpCode);
+        return;
     }
 }
 

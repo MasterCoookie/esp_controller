@@ -15,6 +15,8 @@ Curtain* curtain;
 
 #define STEP 150
 
+unsigned short int checkEventCoutner = 0;
+
 void setup() {
   // initialize the serial port
   Serial.begin(115200);
@@ -94,6 +96,16 @@ void loop() {
       curtain->setConfigMode(false);
     }
     delay(100);
+    
+    //checking for events every 100 secs
+    if(checkEventCoutner < 100) {
+      ++checkEventCoutner;
+    } else {
+      JSONVar payload;
+      curtain->appendUserAuth(payload);
+      curtain->makeJSONResposiveAPICall("check_pending_event", payload);
+    }
+
   } else if(curtain->getRotorState() == RotorState::UP) {
     //stop at limit, unless in config mode
     if(curtain->getCurrentYPos() > 0 || curtain->getConfigMode()) {
