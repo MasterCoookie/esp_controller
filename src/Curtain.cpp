@@ -163,5 +163,7 @@ void Curtain::checkPendingEvent() {
         this->appendUserAuth(payload);
         this->pendingEvent = this->makeJSONResposiveAPICall("check_pending_event", payload);
         Serial.println("event:" + JSON.stringify(this->pendingEvent));
+    } else if(this->pendingEvent["event"]["eventTime"]) {
+
     }
 }
