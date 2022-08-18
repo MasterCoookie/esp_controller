@@ -101,9 +101,9 @@ void loop() {
     if(checkEventCoutner < 100) {
       ++checkEventCoutner;
     } else {
-      JSONVar payload;
-      curtain->appendUserAuth(payload);
-      curtain->makeJSONResposiveAPICall("check_pending_event", payload);
+      
+      checkEventCoutner = 0;
+      curtain->checkPendingEvent();
     }
 
   } else if(curtain->getRotorState() == RotorState::UP) {

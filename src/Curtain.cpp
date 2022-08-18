@@ -96,6 +96,8 @@ int Curtain::makeResponselessAPICall(const String& endpoint, JSONVar& doc) {
 
 JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& doc) {
     HTTPClient http;
+    JSONVar empty;
+
 
     Serial.println("Making http request to "+ this->serverName + endpoint);
     Serial.println("With data: "+ JSON.stringify(doc));
@@ -104,8 +106,9 @@ JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& doc) 
     http.addHeader("Content-Type", "application/json");
     int httpCode = http.POST(JSON.stringify(doc));
     if (httpCode < 0) {
-        Serial.println("Error on HTTP request");
-        return;
+        Serial.println("Error on HTTP request: ");
+        Serial.println(httpCode);
+        return empty;
     } else if(httpCode == 200) {
         String payload = http.getString();
         //TMP
@@ -114,13 +117,13 @@ JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& doc) 
         JSONVar json = JSON.parse(payload);
         if (JSON.typeof(json) == "undefined") {
             Serial.println("Parsing input failed!");
-            return;
+            return empty;
         } else {
             return json;
         }
     } else {
         Serial.println("Code: " + httpCode);
-        return;
+        return empty;
     }
 }
 
@@ -154,7 +157,11 @@ void Curtain::appendUserAuth(JSONVar& doc) {
 }
 
 void Curtain::checkPendingEvent() {
-    if(!this->pendingEvent) {
-
+    // Serial.println(this->pendingEvent.keys().length()); 
+    if(this->pendingEvent.keys().length() <= 0) {
+        JSONVar payload;
+        this->appendUserAuth(payload);
+        this->pendingEvent = this->makeJSONResposiveAPICall("check_pending_event", payload);
+        Serial.println("event:" + JSON.stringify(this->pendingEvent));
     }
 }
