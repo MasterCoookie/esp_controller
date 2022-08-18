@@ -160,6 +160,7 @@ void Curtain::checkPendingEvent() {
     // Serial.println(this->pendingEvent.keys().length()); 
     if(this->pendingEvent.keys().length() <= 0) {
         JSONVar payload;
+        payload["getTimeAsTimestamp"] = true;
         this->appendUserAuth(payload);
         this->pendingEvent = this->makeJSONResposiveAPICall("check_pending_event", payload);
         Serial.println("event:" + JSON.stringify(this->pendingEvent));
