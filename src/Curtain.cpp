@@ -94,8 +94,33 @@ int Curtain::makeResponselessAPICall(const String& endpoint, JSONVar& doc) {
     return httpCode;
 }
 
-JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& payload) {
+JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& doc) {
     HTTPClient http;
+
+    Serial.println("Making http request to "+ this->serverName + endpoint);
+    Serial.println("With data: "+ JSON.stringify(doc));
+
+    http.begin(this->serverName + endpoint);
+    http.addHeader("Content-Type", "application/json");
+    int httpCode = http.POST(JSON.stringify(doc));
+    if (httpCode < 0) {
+        Serial.println("Error on HTTP request");
+        return;
+    } else if(httpCode == 200) {
+        String payload = http.getString();
+        //TMP
+        Serial.println(httpCode);
+        Serial.println(payload);
+        JSONVar json = JSON.parse(payload);
+        if (JSON.typeof(json) == "undefined") {
+            Serial.println("Parsing input failed!");
+            return;
+        } else {
+            return json;
+        }
+    } else {
+        Serial.println("Code: " + httpCode);
+    }
 }
 
 void Curtain::setOwnerCredentials(const std::string& s) {
