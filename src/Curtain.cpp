@@ -94,6 +94,10 @@ int Curtain::makeResponselessAPICall(const String& endpoint, JSONVar& doc) {
     return httpCode;
 }
 
+JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& payload) {
+    HTTPClient http;
+}
+
 void Curtain::setOwnerCredentials(const std::string& s) {
     this->ownerEmail = "";
     this->ownerPassword = "";
@@ -121,4 +125,10 @@ void Curtain::appendUserAuth(JSONVar& doc) {
     doc["deviceID"] = this->deviceID;
     //tmp
     // Serial.println(JSON.stringify(doc));
+}
+
+void Curtain::checkPendingEvent() {
+    if(!this->pendingEvent) {
+
+    }
 }

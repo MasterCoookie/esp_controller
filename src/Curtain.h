@@ -27,13 +27,15 @@ public:
     const int getYPosClosed() const { return this->YPosClosed; }
     void setYPosClosed(const int& y) { this->YPosClosed = y; }
 
-    int makeResponselessAPICall(const String& endpoint, JSONVar& doc);
+    int makeResponselessAPICall(const String& endpoint, JSONVar& payload);
+    JSONVar makeJSONResposiveAPICall(const String& endpoint, JSONVar& payload);
     void appendUserAuth(JSONVar& doc);
 
     void setOwnerCredentials(const std::string& s);
 
     static Curtain* getInstance();
 
+    void checkPendingEvent();
 private:
     Curtain();
 
@@ -47,6 +49,8 @@ private:
     String deviceID;
 
     RotorState rotorState;
+
+    JSONVar pendingEvent;
 
     int YPosClosed;
     int currentYPos;
