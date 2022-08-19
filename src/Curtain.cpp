@@ -182,6 +182,7 @@ void Curtain::checkPendingEvent() {
             int y_step = (int)this->pendingEvent["event"]["targetYpos"] - this->currentYPos;
             this->setCurrentYPos(y_step);
             this->stepperStep(y_step);
+            this->pendingEvent = JSONVar();
         }
     }
 }
