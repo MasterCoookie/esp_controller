@@ -4,6 +4,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
+#include "time.h"
 
 enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
 

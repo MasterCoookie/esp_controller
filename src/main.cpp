@@ -65,6 +65,13 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   //OTA ends
+  
+  //TIME STUFF
+  const char* ntpServer = "pool.ntp.org";
+  const long  gmtOffset_sec = 3600;
+  const int   daylightOffset_sec = 3600;
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
   curtain = Curtain::getInstance();
   curtain->setStepperSpeed(29);
 

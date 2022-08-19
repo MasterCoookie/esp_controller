@@ -51,6 +51,10 @@ Curtain::Curtain() {
             this->stepper->setSpeed(speed);
             this->YPosClosed = (int)json["device"]["YPosClosed"];
             this->deviceID = json["device"]["_id"];
+
+            //TMPdev
+            this->ownerEmail = "jan.kocurek@proton.me";
+            this->ownerPassword = "dupa1234";
         }
       } else {
         Serial.println(httpCode);
@@ -157,14 +161,19 @@ void Curtain::appendUserAuth(JSONVar& doc) {
 }
 
 void Curtain::checkPendingEvent() {
-    // Serial.println(this->pendingEvent.keys().length()); 
+    Serial.println(this->pendingEvent.keys().length()); 
     if(this->pendingEvent.keys().length() <= 0) {
         JSONVar payload;
         payload["getTimeAsTimestamp"] = true;
+        payload["getDummyData"] = true;
         this->appendUserAuth(payload);
         this->pendingEvent = this->makeJSONResposiveAPICall("check_pending_event", payload);
         Serial.println("event:" + JSON.stringify(this->pendingEvent));
-    } else if(this->pendingEvent["event"]["eventTime"]) {
-
+    } else {
+        time_t now;
+        time(&now);
+        delay(10);
+        time_t currentT = now;
+        Serial.println("now: " + currentT);
     }
 }
