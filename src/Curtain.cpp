@@ -170,10 +170,19 @@ void Curtain::checkPendingEvent() {
         this->pendingEvent = this->makeJSONResposiveAPICall("check_pending_event", payload);
         Serial.println("event:" + JSON.stringify(this->pendingEvent));
     } else {
-        time_t now;
-        time(&now);
-        delay(10);
-        time_t currentT = now;
-        Serial.println("now: " + currentT);
+        this->epochTime = getTime();
+        Serial.print("Epoch Time: ");
+        Serial.println(this->epochTime);
     }
+}
+
+unsigned long Curtain::getTime() {
+  time_t now;
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    Serial.println("Failed to obtain time");
+    return(0);
+  }
+  time(&now);
+  return now;
 }

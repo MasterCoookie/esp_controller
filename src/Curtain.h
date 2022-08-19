@@ -39,6 +39,8 @@ public:
     void checkPendingEvent();
 private:
     Curtain();
+    unsigned long getTime();
+    unsigned long epochTime;
 
     static Curtain* curtain_;
 
