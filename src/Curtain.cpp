@@ -171,8 +171,10 @@ void Curtain::checkPendingEvent() {
         Serial.println("event:" + JSON.stringify(this->pendingEvent));
     } else {
         this->epochTime = getTime();
-        Serial.print("Epoch Time: ");
-        Serial.println(this->epochTime);
+        // Serial.print("Epoch Time: ");
+        int diff = ((int)this->pendingEvent["event"]["eventTime"]) - this->epochTime;
+        // Serial.print("Time o event: ");
+        // Serial.println(diff);
     }
 }
 
