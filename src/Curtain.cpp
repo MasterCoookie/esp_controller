@@ -161,7 +161,7 @@ void Curtain::appendUserAuth(JSONVar& doc) {
 }
 
 void Curtain::checkPendingEvent() {
-    Serial.println(this->pendingEvent.keys().length()); 
+    // Serial.println(this->pendingEvent.keys().length()); 
     if(this->pendingEvent.keys().length() <= 0) {
         JSONVar payload;
         payload["getTimeAsTimestamp"] = true;
@@ -175,6 +175,14 @@ void Curtain::checkPendingEvent() {
         int diff = ((int)this->pendingEvent["event"]["eventTime"]) - this->epochTime;
         // Serial.print("Time o event: ");
         // Serial.println(diff);
+        if(diff < 0) {
+            //do event
+            Serial.print("Going to Y: ");
+            Serial.println(this->pendingEvent["event"]["targetYpos"]);
+            int y_step = (int)this->pendingEvent["event"]["targetYpos"] - this->currentYPos;
+            this->setCurrentYPos(y_step);
+            this->stepperStep(y_step);
+        }
     }
 }
 
