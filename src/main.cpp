@@ -40,7 +40,7 @@ void EEPROMWrite(const char* data, unsigned short int& addr) {
     EEPROM.commit();
 }
 
-char* EEPROMRead(unsigned short int startingAddr) {
+String EEPROMRead(unsigned short int startingAddr) {
   String result = "";
   for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
         // Serial.print("Reading from: ");
@@ -57,9 +57,7 @@ char* EEPROMRead(unsigned short int startingAddr) {
   //TMP
   // Serial.print("EEPRROM read val: ");
   // Serial.println(result);
-  char char_array[result.length() + 1];
-  strcpy(char_array, result.c_str());
-  return char_array;
+  return result;
 }
 
 void setup() {
@@ -74,14 +72,14 @@ void setup() {
   // EEPROMWrite(ssid, currentEEPROMAddr);
   // EEPROMWrite(password, currentEEPROMAddr);
 
-  const char* ssid = EEPROMRead(0);
-  const char* password = EEPROMRead(EEPROM_SIZE);
+  String ssid = EEPROMRead(0);
+  String password = EEPROMRead(EEPROM_SIZE);
 
   //wifi
-  Serial.println("Booting");
+  Serial.println("\nBooting");
   WiFi.mode(WIFI_STA);
 
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid.c_str(), password.c_str());
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
     Serial.println("Connection Failed! Rebooting...");
     delay(5000);
