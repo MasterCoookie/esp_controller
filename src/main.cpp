@@ -27,16 +27,15 @@ void EEPROMWrite(const char* data, unsigned short int& addr) {
   unsigned short int write_addr = addr;
   for (int i = 0; (i < EEPROM_SIZE) && (i < strlen(data)); ++i) {
         EEPROM.write(write_addr, data[i]);
-        Serial.print("Writing to: ");
-        Serial.print(write_addr);
-        Serial.print(" value: ");
+        // Serial.print("Writing to: ");
+        // Serial.print(write_addr);
+        // Serial.print(" value: ");
         write_addr += 1;
-        Serial.println(char(EEPROM.read(write_addr)));
+        // Serial.println(char(EEPROM.read(write_addr)));
     }
-    // write_addr += 1;
     EEPROM.write(write_addr, 0);
-    Serial.print("Writing 0 to: ");
-    Serial.println(write_addr);
+    // Serial.print("Writing 0 to: ");
+    // Serial.println(write_addr);
     addr += EEPROM_SIZE;
     EEPROM.commit();
 }
@@ -44,11 +43,11 @@ void EEPROMWrite(const char* data, unsigned short int& addr) {
 String EEPROMRead(unsigned short int startingAddr) {
   String result = "";
   for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
-        Serial.print("Reading from: ");
-        Serial.print(i);
+        // Serial.print("Reading from: ");
+        // Serial.print(i);
         byte readValue = EEPROM.read(i);
-        Serial.print(" read value: ");
-        Serial.println(char(readValue));
+        // Serial.print(" read value: ");
+        // Serial.println(char(readValue));
 
         if (readValue == 0) {
             break;
@@ -57,8 +56,8 @@ String EEPROMRead(unsigned short int startingAddr) {
         result += char(readValue);
     }
   //TMP
-  Serial.print("EEPRROM read val: ");
-  Serial.println(result);
+  // Serial.print("EEPRROM read val: ");
+  // Serial.println(result);
 
   return result;
 }
