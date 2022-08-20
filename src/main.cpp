@@ -4,7 +4,8 @@
 #include "SetupCallback.h"
 #include "RemoteCallback.h"
 
-#define EEPROM_SIZE 64
+#define EEPROM_SIZE 32
+#define EEPROM_CHUNKS 4
 
 //TMP
 const char* ssid = "Maszt 5G test 300% mocy";
@@ -20,20 +21,34 @@ Curtain* curtain;
 
 unsigned short int checkEventCoutner = 0;
 
-unsigned short int addr = 0;
+unsigned short int currentEEPROMAddr = 0;
 
-void EEPROMWrite(const char* data) {
-  for (int i = 0; i < EEPROM_SIZE; i++) {
-        EEPROM.write(addr, data[i]);
-        addr += 1;
+void EEPROMWrite(const char* data, unsigned short int& addr) {
+  unsigned short int write_addr = addr;
+  for (int i = 0; (i < EEPROM_SIZE) && (i < strlen(data)); ++i) {
+        EEPROM.write(write_addr, data[i]);
+        Serial.print("Writing to: ");
+        Serial.print(write_addr);
+        Serial.print(" value: ");
+        write_addr += 1;
+        Serial.println(char(EEPROM.read(write_addr)));
     }
+    // write_addr += 1;
+    EEPROM.write(write_addr, 0);
+    Serial.print("Writing 0 to: ");
+    Serial.println(write_addr);
+    addr += EEPROM_SIZE;
     EEPROM.commit();
 }
 
 String EEPROMRead(unsigned short int startingAddr) {
   String result = "";
-  for (int i = startingAddr; i < EEPROM_SIZE; i++) {
+  for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
+        Serial.print("Reading from: ");
+        Serial.print(i);
         byte readValue = EEPROM.read(i);
+        Serial.print(" read value: ");
+        Serial.println(char(readValue));
 
         if (readValue == 0) {
             break;
@@ -53,11 +68,16 @@ void setup() {
   Serial.begin(115200);
   delay(100);
 
-  if (!EEPROM.begin(EEPROM_SIZE)) {
+  if (!EEPROM.begin(EEPROM_SIZE * EEPROM_CHUNKS)) {
       Serial.println("failed to init EEPROM");
   }
 
-  EEPROMWrite(ssid);
+  EEPROMWrite(ssid, currentEEPROMAddr);
+
+  EEPROMWrite(password, currentEEPROMAddr);
+
+  EEPROMRead(0);
+  EEPROMRead(EEPROM_SIZE);
 
   //wifi
   Serial.println("Booting");
@@ -132,7 +152,6 @@ void setup() {
 
 void loop() {
   ArduinoOTA.handle();
-  EEPROMRead(0);
 
   if(curtain->getRotorState() == RotorState::STOP) {
     curtain->stepperPowerOff();
