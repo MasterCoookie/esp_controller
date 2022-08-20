@@ -30,9 +30,9 @@ void EEPROMWrite(const char* data) {
     EEPROM.commit();
 }
 
-String EEPROMRead() {
+String EEPROMRead(unsigned short int startingAddr) {
   String result = "";
-  for (int i = 0; i < EEPROM_SIZE; i++) {
+  for (int i = startingAddr; i < EEPROM_SIZE; i++) {
         byte readValue = EEPROM.read(i);
 
         if (readValue == 0) {
@@ -41,8 +41,11 @@ String EEPROMRead() {
 
         result += char(readValue);
     }
+  //TMP
   Serial.print("EEPRROM read val: ");
   Serial.println(result);
+
+  return result;
 }
 
 void setup() {
@@ -53,6 +56,8 @@ void setup() {
   if (!EEPROM.begin(EEPROM_SIZE)) {
       Serial.println("failed to init EEPROM");
   }
+
+  EEPROMWrite(ssid);
 
   //wifi
   Serial.println("Booting");
@@ -127,6 +132,7 @@ void setup() {
 
 void loop() {
   ArduinoOTA.handle();
+  EEPROMRead(0);
 
   if(curtain->getRotorState() == RotorState::STOP) {
     curtain->stepperPowerOff();
