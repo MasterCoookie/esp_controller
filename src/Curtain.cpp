@@ -58,8 +58,17 @@ void Curtain::initializeOnline() {
             this->deviceID = json["device"]["_id"];
 
             //TMPdev
-            this->ownerEmail = "jan.kocurek@proton.me";
-            this->ownerPassword = "dupa1234";
+            // this->ownerEmail = "jan.kocurek@proton.me";
+            // this->ownerPassword = "dupa1234";
+
+            this->ownerEmail = this->EEPROMRead(64);
+            this->ownerPassword = this->EEPROMRead(96);
+
+            //TMPdev
+            Serial.print("Read email: ");
+            Serial.println(this->ownerEmail);
+            Serial.print("Read password: ");
+            Serial.println(this->ownerPassword);
         }
       } else {
         Serial.println(httpCode);
@@ -215,7 +224,7 @@ void Curtain::EEPROMWrite(const char* data, unsigned short int write_addr) {
         Serial.println(char(EEPROM.read(write_addr)));
         write_addr += 1;
     }
-    EEPROM.write(write_addr, 0);
+    // EEPROM.write(write_addr, 0);
     // Serial.print("Writing 0 to: ");
     // Serial.println(write_addr);
     EEPROM.commit();
@@ -224,11 +233,11 @@ void Curtain::EEPROMWrite(const char* data, unsigned short int write_addr) {
 String Curtain::EEPROMRead(unsigned short int startingAddr) {
   String result = "";
   for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
-        // Serial.print("Reading from: ");
-        // Serial.print(i);
+        Serial.print("Reading from: ");
+        Serial.print(i);
         byte readValue = EEPROM.read(i);
-        // Serial.print(" read value: ");
-        // Serial.println(char(readValue));
+        Serial.print(" read value: ");
+        Serial.println(char(readValue));
         if (readValue == 0) {
             break;
         }
