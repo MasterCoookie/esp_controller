@@ -218,10 +218,10 @@ void Curtain::EEPROMWrite(const char* data, unsigned short int write_addr) {
         } else {
             EEPROM.write(write_addr, data[i]);
         }
-        Serial.print("Writing to: ");
-        Serial.print(write_addr);
-        Serial.print(" value: ");
-        Serial.println(char(EEPROM.read(write_addr)));
+        // Serial.print("Writing to: ");
+        // Serial.print(write_addr);
+        // Serial.print(" value: ");
+        // Serial.println(char(EEPROM.read(write_addr)));
         write_addr += 1;
     }
     // EEPROM.write(write_addr, 0);
@@ -233,11 +233,11 @@ void Curtain::EEPROMWrite(const char* data, unsigned short int write_addr) {
 String Curtain::EEPROMRead(unsigned short int startingAddr) {
   String result = "";
   for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
-        Serial.print("Reading from: ");
-        Serial.print(i);
+        // Serial.print("Reading from: ");
+        // Serial.print(i);
         byte readValue = EEPROM.read(i);
-        Serial.print(" read value: ");
-        Serial.println(char(readValue));
+        // Serial.print(" read value: ");
+        // Serial.println(char(readValue));
         if (readValue == 0) {
             break;
         }
