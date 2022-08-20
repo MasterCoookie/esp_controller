@@ -1,7 +1,10 @@
 #include <ArduinoOTA.h>
 
+#include "EEPROM.h"
 #include "SetupCallback.h"
 #include "RemoteCallback.h"
+
+#define EEPROM_SIZE 64
 
 //TMP
 const char* ssid = "Maszt 5G test 300% mocy";
@@ -17,10 +20,39 @@ Curtain* curtain;
 
 unsigned short int checkEventCoutner = 0;
 
+unsigned short int addr = 0;
+
+void EEPROMWrite(const char* data) {
+  for (int i = 0; i < EEPROM_SIZE; i++) {
+        EEPROM.write(addr, data[i]);
+        addr += 1;
+    }
+    EEPROM.commit();
+}
+
+String EEPROMRead() {
+  String result = "";
+  for (int i = 0; i < EEPROM_SIZE; i++) {
+        byte readValue = EEPROM.read(i);
+
+        if (readValue == 0) {
+            break;
+        }
+
+        result += char(readValue);
+    }
+  Serial.print("EEPRROM read val: ");
+  Serial.println(result);
+}
+
 void setup() {
   // initialize the serial port
   Serial.begin(115200);
   delay(100);
+
+  if (!EEPROM.begin(EEPROM_SIZE)) {
+      Serial.println("failed to init EEPROM");
+  }
 
   //wifi
   Serial.println("Booting");
