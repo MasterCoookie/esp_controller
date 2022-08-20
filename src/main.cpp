@@ -8,7 +8,7 @@
 #define EEPROM_CHUNKS 4
 
 //TMP
-const char* ssid = "Maszt 5G test 300% mocy";
+
 const char* password = "aqq123321qqa";
 
 Curtain* curtain;
@@ -40,7 +40,7 @@ void EEPROMWrite(const char* data, unsigned short int& addr) {
     EEPROM.commit();
 }
 
-String EEPROMRead(unsigned short int startingAddr) {
+char* EEPROMRead(unsigned short int startingAddr) {
   String result = "";
   for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
         // Serial.print("Reading from: ");
@@ -48,7 +48,6 @@ String EEPROMRead(unsigned short int startingAddr) {
         byte readValue = EEPROM.read(i);
         // Serial.print(" read value: ");
         // Serial.println(char(readValue));
-
         if (readValue == 0) {
             break;
         }
@@ -58,8 +57,9 @@ String EEPROMRead(unsigned short int startingAddr) {
   //TMP
   // Serial.print("EEPRROM read val: ");
   // Serial.println(result);
-
-  return result;
+  char char_array[result.length() + 1];
+  strcpy(char_array, result.c_str());
+  return char_array;
 }
 
 void setup() {
@@ -71,12 +71,11 @@ void setup() {
       Serial.println("failed to init EEPROM");
   }
 
-  EEPROMWrite(ssid, currentEEPROMAddr);
+  // EEPROMWrite(ssid, currentEEPROMAddr);
+  // EEPROMWrite(password, currentEEPROMAddr);
 
-  EEPROMWrite(password, currentEEPROMAddr);
-
-  EEPROMRead(0);
-  EEPROMRead(EEPROM_SIZE);
+  const char* ssid = EEPROMRead(0);
+  const char* password = EEPROMRead(EEPROM_SIZE);
 
   //wifi
   Serial.println("Booting");
