@@ -25,7 +25,7 @@ unsigned short int currentEEPROMAddr = 0;
 
 void EEPROMWrite(const char* data, unsigned short int& addr) {
   unsigned short int write_addr = addr;
-  for (int i = 0; (i < EEPROM_SIZE) && (i < strlen(data)); ++i) {
+  for (int i = 0; i < EEPROM_SIZE; ++i) {
         EEPROM.write(write_addr, data[i]);
         // Serial.print("Writing to: ");
         // Serial.print(write_addr);
@@ -69,8 +69,8 @@ void setup() {
       Serial.println("failed to init EEPROM");
   }
 
-  // EEPROMWrite(ssid, currentEEPROMAddr);
-  // EEPROMWrite(password, currentEEPROMAddr);
+  // EEPROMWrite("Maszt 5G test 300% mocy", currentEEPROMAddr);
+  // EEPROMWrite("aqq123321qqa", currentEEPROMAddr);
 
   String ssid = EEPROMRead(0);
   String password = EEPROMRead(EEPROM_SIZE);
