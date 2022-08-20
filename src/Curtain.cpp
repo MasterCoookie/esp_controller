@@ -204,7 +204,11 @@ unsigned long Curtain::getTime() {
 
 void Curtain::EEPROMWrite(const char* data, unsigned short int write_addr) {
   for (int i = 0; i < EEPROM_SIZE; ++i) {
-        EEPROM.write(write_addr, data[i]);
+        if(strlen(data) <= i) {
+            EEPROM.write(write_addr, 0);
+        } else {
+            EEPROM.write(write_addr, data[i]);
+        }
         Serial.print("Writing to: ");
         Serial.print(write_addr);
         Serial.print(" value: ");
