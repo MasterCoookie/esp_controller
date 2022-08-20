@@ -46,14 +46,12 @@ public:
 
     void checkPendingEvent();
 
-    void EEPROMWrite(const char* data, unsigned short int& addr);
+    void EEPROMWrite(const char* data, unsigned short int startingAddrr);
     String EEPROMRead(unsigned short int startingAddr);
 private:
     Curtain();
     unsigned long getTime();
     unsigned long epochTime;
-
-    unsigned short int currentEEPROMAddr = 0;
 
     static Curtain* curtain_;
 

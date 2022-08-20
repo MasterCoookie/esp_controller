@@ -152,6 +152,8 @@ void Curtain::setOwnerCredentials(const std::string& s) {
     Serial.print("password: ");
     Serial.println(this->ownerPassword);
 
+    EEPROMWrite(this->ownerEmail.c_str(), 64);
+    EEPROMWrite(this->ownerPassword.c_str(), 96);
 }
 
 void Curtain::appendUserAuth(JSONVar& doc) {
@@ -200,20 +202,18 @@ unsigned long Curtain::getTime() {
   return now;
 }
 
-void Curtain::EEPROMWrite(const char* data, unsigned short int& addr) {
-  unsigned short int write_addr = addr;
+void Curtain::EEPROMWrite(const char* data, unsigned short int write_addr) {
   for (int i = 0; i < EEPROM_SIZE; ++i) {
         EEPROM.write(write_addr, data[i]);
-        // Serial.print("Writing to: ");
-        // Serial.print(write_addr);
-        // Serial.print(" value: ");
+        Serial.print("Writing to: ");
+        Serial.print(write_addr);
+        Serial.print(" value: ");
+        Serial.println(char(EEPROM.read(write_addr)));
         write_addr += 1;
-        // Serial.println(char(EEPROM.read(write_addr)));
     }
     EEPROM.write(write_addr, 0);
     // Serial.print("Writing 0 to: ");
     // Serial.println(write_addr);
-    addr += EEPROM_SIZE;
     EEPROM.commit();
 }
 

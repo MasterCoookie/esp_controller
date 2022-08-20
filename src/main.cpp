@@ -22,10 +22,11 @@ void setup() {
       Serial.println("failed to init EEPROM");
   }
 
-  // EEPROMWrite("Maszt 5G test 300% mocy", currentEEPROMAddr);
-  // EEPROMWrite("aqq123321qqa", currentEEPROMAddr);
-
   curtain = Curtain::getInstance();
+
+  curtain->EEPROMWrite("Maszt 5G test 300% mocy", 0);
+  curtain->EEPROMWrite("aqq123321qqa", 32);
+
 
   String ssid = curtain->EEPROMRead(0);
   String password = curtain->EEPROMRead(EEPROM_SIZE);
