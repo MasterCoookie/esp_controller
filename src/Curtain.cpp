@@ -8,13 +8,18 @@
 Curtain* Curtain::curtain_ = nullptr;
 
 Curtain::Curtain() {
-    //TODO: make offline version
     //TMP
     this->BLEMAC = "0C:B8:15:CA:0B:92";
 
     const int stepsPerRevolution = 2048;
     this->stepper = new Stepper(stepsPerRevolution, IN1, IN3, IN2, IN4);
 
+    this->rotorState = RotorState::STOP;
+    this->currentYPos = 0;
+    this->configMode = false;
+}
+
+void Curtain::initializeOnline() {
     this->serverName = "http://192.168.0.174:3000/";
     String endpoint = "get_device_by_mac";
 
@@ -37,7 +42,7 @@ Curtain::Curtain() {
         JSONVar json = JSON.parse(payload);
         if (JSON.typeof(json) == "undefined") {
             Serial.println("Parsing input failed!");
-            this->stepper->setSpeed(26);
+            this->stepper->setSpeed(29);
             this->YPosClosed = 6000;
         } else {
             //tmp
@@ -62,10 +67,6 @@ Curtain::Curtain() {
     }
  
     http.end(); 
-
-    this->rotorState = RotorState::STOP;
-    this->currentYPos = 0;
-    this->configMode = false;
 }
 
 Curtain* Curtain::getInstance() {
@@ -150,6 +151,7 @@ void Curtain::setOwnerCredentials(const std::string& s) {
     Serial.println(this->ownerEmail);
     Serial.print("password: ");
     Serial.println(this->ownerPassword);
+
 }
 
 void Curtain::appendUserAuth(JSONVar& doc) {
@@ -196,4 +198,40 @@ unsigned long Curtain::getTime() {
   }
   time(&now);
   return now;
+}
+
+void Curtain::EEPROMWrite(const char* data, unsigned short int& addr) {
+  unsigned short int write_addr = addr;
+  for (int i = 0; i < EEPROM_SIZE; ++i) {
+        EEPROM.write(write_addr, data[i]);
+        // Serial.print("Writing to: ");
+        // Serial.print(write_addr);
+        // Serial.print(" value: ");
+        write_addr += 1;
+        // Serial.println(char(EEPROM.read(write_addr)));
+    }
+    EEPROM.write(write_addr, 0);
+    // Serial.print("Writing 0 to: ");
+    // Serial.println(write_addr);
+    addr += EEPROM_SIZE;
+    EEPROM.commit();
+}
+
+String Curtain::EEPROMRead(unsigned short int startingAddr) {
+  String result = "";
+  for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
+        // Serial.print("Reading from: ");
+        // Serial.print(i);
+        byte readValue = EEPROM.read(i);
+        // Serial.print(" read value: ");
+        // Serial.println(char(readValue));
+        if (readValue == 0) {
+            break;
+        }
+
+        result += char(readValue);
+    }
+  // Serial.print("EEPRROM read val: ");
+  // Serial.println(result);
+  return result;
 }

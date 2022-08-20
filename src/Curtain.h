@@ -4,12 +4,20 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
+
 #include "time.h"
+#include "EEPROM.h"
+
+#define EEPROM_SIZE 32
+#define EEPROM_CHUNKS 4
 
 enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
 
 class Curtain {
 public:
+    //TODO: make offline version
+    void initializeOnline();
+
     const RotorState getRotorState() const { return this->rotorState; }
     void setRotorState(const RotorState state) { this->rotorState = state; }
     void setStepperSpeed(const int speed) { this->stepper->setSpeed(speed); }
@@ -37,10 +45,15 @@ public:
     static Curtain* getInstance();
 
     void checkPendingEvent();
+
+    void EEPROMWrite(const char* data, unsigned short int& addr);
+    String EEPROMRead(unsigned short int startingAddr);
 private:
     Curtain();
     unsigned long getTime();
     unsigned long epochTime;
+
+    unsigned short int currentEEPROMAddr = 0;
 
     static Curtain* curtain_;
 

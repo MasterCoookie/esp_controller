@@ -1,15 +1,7 @@
 #include <ArduinoOTA.h>
 
-#include "EEPROM.h"
 #include "SetupCallback.h"
 #include "RemoteCallback.h"
-
-#define EEPROM_SIZE 32
-#define EEPROM_CHUNKS 4
-
-//TMP
-
-const char* password = "aqq123321qqa";
 
 Curtain* curtain;
 
@@ -20,45 +12,6 @@ Curtain* curtain;
 #define STEP 150
 
 unsigned short int checkEventCoutner = 0;
-
-unsigned short int currentEEPROMAddr = 0;
-
-void EEPROMWrite(const char* data, unsigned short int& addr) {
-  unsigned short int write_addr = addr;
-  for (int i = 0; i < EEPROM_SIZE; ++i) {
-        EEPROM.write(write_addr, data[i]);
-        // Serial.print("Writing to: ");
-        // Serial.print(write_addr);
-        // Serial.print(" value: ");
-        write_addr += 1;
-        // Serial.println(char(EEPROM.read(write_addr)));
-    }
-    EEPROM.write(write_addr, 0);
-    // Serial.print("Writing 0 to: ");
-    // Serial.println(write_addr);
-    addr += EEPROM_SIZE;
-    EEPROM.commit();
-}
-
-String EEPROMRead(unsigned short int startingAddr) {
-  String result = "";
-  for (int i = startingAddr; i < (startingAddr + EEPROM_SIZE); ++i) {
-        // Serial.print("Reading from: ");
-        // Serial.print(i);
-        byte readValue = EEPROM.read(i);
-        // Serial.print(" read value: ");
-        // Serial.println(char(readValue));
-        if (readValue == 0) {
-            break;
-        }
-
-        result += char(readValue);
-    }
-  //TMP
-  // Serial.print("EEPRROM read val: ");
-  // Serial.println(result);
-  return result;
-}
 
 void setup() {
   // initialize the serial port
@@ -72,8 +25,10 @@ void setup() {
   // EEPROMWrite("Maszt 5G test 300% mocy", currentEEPROMAddr);
   // EEPROMWrite("aqq123321qqa", currentEEPROMAddr);
 
-  String ssid = EEPROMRead(0);
-  String password = EEPROMRead(EEPROM_SIZE);
+  curtain = Curtain::getInstance();
+
+  String ssid = curtain->EEPROMRead(0);
+  String password = curtain->EEPROMRead(EEPROM_SIZE);
 
   //wifi
   Serial.println("\nBooting");
@@ -87,6 +42,8 @@ void setup() {
   }
   Serial.print("Connected to ");
   Serial.println(ssid);
+  //TODO if not connected, init offline
+  curtain->initializeOnline();
 
   //OTA starts
   ArduinoOTA.onStart([]() {
@@ -125,8 +82,6 @@ void setup() {
   const int   daylightOffset_sec = 3600;
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
-  curtain = Curtain::getInstance();
-  curtain->setStepperSpeed(29);
 
   BLEDevice::init("MyESP32");
   BLEServer *pServer = BLEDevice::createServer();
