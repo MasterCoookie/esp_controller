@@ -52,6 +52,7 @@ public:
     String EEPROMRead(unsigned short int startingAddr);
 private:
     Curtain();
+    void initFromJSON(JSONVar& json);
     unsigned long getTime();
     unsigned long epochTime;
 

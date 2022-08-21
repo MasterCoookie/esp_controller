@@ -55,17 +55,7 @@ void Curtain::initializeOnline() {
                     this->stepper->setSpeed(29);
                     this->YPosClosed = 6000;
                 } else {
-                    //tmp
-                    Serial.print("Device: ");
-                    Serial.println(json["device"]["name"]);
-
-                    int speed = (int)json["device"]["motorSpeed"];
-                    
-                    Serial.print("Speed set to: ");
-                    Serial.println(speed);
-                    this->stepper->setSpeed(speed);
-                    this->YPosClosed = (int)json["device"]["YPosClosed"];
-                    this->deviceID = json["device"]["_id"];
+                    this->initFromJSON(json);
 
                     this->ownerEmail = this->EEPROMRead(64);
                     this->ownerPassword = this->EEPROMRead(96);
@@ -86,6 +76,20 @@ void Curtain::initializeOnline() {
             http.end(); 
         }
     }
+}
+
+void Curtain::initFromJSON(JSONVar& json) { 
+    //tmp
+    Serial.print("Device: ");
+    Serial.println(json["device"]["name"]);
+
+    short int speed = (int)json["device"]["motorSpeed"];
+    
+    Serial.print("Speed set to: ");
+    Serial.println(speed);
+    this->stepper->setSpeed(speed);
+    this->YPosClosed = (int)json["device"]["YPosClosed"];
+    this->deviceID = json["device"]["_id"];
 }
 
 Curtain* Curtain::getInstance() {
