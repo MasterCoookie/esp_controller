@@ -21,7 +21,8 @@ Curtain::Curtain() {
 }
 
 void Curtain::initializeOnline() {
-    this->serverName = "http://192.168.0.174:3000/";
+    // this->serverName = "http://192.168.0.174:3000/";
+    this->serverName = "http://esp-curtain-api.herokuapp.com/";
     String endpoint = "get_device_by_mac";
 
     JSONVar data;
