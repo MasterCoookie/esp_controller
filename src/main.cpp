@@ -12,11 +12,13 @@ Curtain* curtain;
 #define STEP 150
 
 unsigned short int checkEventCoutner = 0;
+unsigned short int retryCounter = 0;
 
 void setup() {
   // initialize the serial port
   Serial.begin(115200);
   delay(100);
+  Serial.println("\nBooting");
 
   if (!EEPROM.begin(EEPROM_SIZE * EEPROM_CHUNKS)) {
       Serial.println("failed to init EEPROM");
@@ -32,19 +34,22 @@ void setup() {
   String password = curtain->EEPROMRead(EEPROM_SIZE);
 
   //wifi
-  Serial.println("\nBooting");
   WiFi.mode(WIFI_STA);
 
   WiFi.begin(ssid.c_str(), password.c_str());
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    Serial.println("Connection Failed! Rebooting...");
+  while (WiFi.waitForConnectResult() != WL_CONNECTED && retryCounter < 4) {
+    Serial.print("Connection Failed! Retrying count ");
+    Serial.println(++retryCounter);
     delay(5000);
-    ESP.restart();
+    WiFi.begin(ssid.c_str(), password.c_str());
   }
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  //TODO if not connected, init offline
-  curtain->initializeOnline();
+
+  if(WiFi.status() == WL_CONNECTED) {
+    Serial.print("Connected to ");
+    Serial.println(ssid);
+    //TODO if not connected, init offline
+    curtain->initializeOnline();
+  }  
 
   //OTA starts
   ArduinoOTA.onStart([]() {
