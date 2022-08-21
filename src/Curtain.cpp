@@ -17,6 +17,7 @@ Curtain::Curtain() {
     this->rotorState = RotorState::STOP;
     this->currentYPos = 0;
     this->configMode = false;
+    this->onlineMode = false;
 }
 
 void Curtain::initializeOnline() {
@@ -27,7 +28,6 @@ void Curtain::initializeOnline() {
     data["MAC"] = this->BLEMAC;
     
     unsigned short int retry_count = 0;
-    this->onlineMode = false;
 
     while(retry_count < 4) {
         if (WiFi.status() != WL_CONNECTED) {
@@ -57,12 +57,6 @@ void Curtain::initializeOnline() {
 
                     this->ownerEmail = this->EEPROMRead(64);
                     this->ownerPassword = this->EEPROMRead(96);
-
-                    //TMPdev
-                    Serial.print("Read email: ");
-                    Serial.println(this->ownerEmail);
-                    Serial.print("Read password: ");
-                    Serial.println(this->ownerPassword);
 
                     this->onlineMode = true;
                     break;
