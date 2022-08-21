@@ -113,7 +113,9 @@ void setup() {
 }
 
 void loop() {
-  ArduinoOTA.handle();
+  if(WiFi.status() == WL_CONNECTED) {
+    ArduinoOTA.handle();
+  }
 
   if(curtain->getRotorState() == RotorState::STOP) {
     curtain->stepperPowerOff();
@@ -126,8 +128,7 @@ void loop() {
     //checking for events every 100 secs
     if(checkEventCoutner < 100) {
       ++checkEventCoutner;
-    } else {
-      
+    } else if(curtain->isInOnlineMode()) {
       checkEventCoutner = 0;
       curtain->checkPendingEvent();
     }
