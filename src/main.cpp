@@ -50,9 +50,9 @@ void setup() {
       Serial.println(ssid);
       //TODO if not connected, init offline
       curtain->initializeOnline();
-    }  
+    }
 
-    //OTA starts
+      //OTA starts
     ArduinoOTA.onStart([]() {
         String type;
         if (ArduinoOTA.getCommand() == U_FLASH)
@@ -76,18 +76,22 @@ void setup() {
       });
 
     ArduinoOTA.begin();
+    if(curtain->isInOnlineMode()) {
 
-    Serial.println("Ready");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
+      Serial.println("Ready in online mode");
+      Serial.print("IP address: ");
+      Serial.println(WiFi.localIP());
 
-    //OTA ends
-    
-    //TIME STUFF
-    const char* ntpServer = "pool.ntp.org";
-    const long  gmtOffset_sec = 3600;
-    const int   daylightOffset_sec = 3600;
-    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+      //OTA ends
+      
+      //TIME STUFF
+      const char* ntpServer = "pool.ntp.org";
+      const long  gmtOffset_sec = 3600;
+      const int   daylightOffset_sec = 3600;
+      configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+    } else {
+      //TODO: Init offilne
+    }
   }
 
   BLEDevice::init("MyESP32");
