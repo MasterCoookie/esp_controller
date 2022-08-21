@@ -33,61 +33,62 @@ void setup() {
   String ssid = curtain->EEPROMRead(0);
   String password = curtain->EEPROMRead(EEPROM_SIZE);
 
-  //wifi
-  WiFi.mode(WIFI_STA);
+  if(ssid.length() > 0 && password.length() > 0) {
+    //wifi
+    WiFi.mode(WIFI_STA);
 
-  WiFi.begin(ssid.c_str(), password.c_str());
-  while (WiFi.waitForConnectResult() != WL_CONNECTED && retryCounter < 4) {
-    Serial.print("Connection Failed! Retrying count ");
-    Serial.println(++retryCounter);
-    delay(5000);
     WiFi.begin(ssid.c_str(), password.c_str());
+    while (WiFi.waitForConnectResult() != WL_CONNECTED && retryCounter < 4) {
+      Serial.print("Connection Failed! Retrying count ");
+      Serial.println(++retryCounter);
+      delay(5000);
+      WiFi.begin(ssid.c_str(), password.c_str());
+    }
+
+    if(WiFi.status() == WL_CONNECTED) {
+      Serial.print("Connected to ");
+      Serial.println(ssid);
+      //TODO if not connected, init offline
+      curtain->initializeOnline();
+    }  
+
+    //OTA starts
+    ArduinoOTA.onStart([]() {
+        String type;
+        if (ArduinoOTA.getCommand() == U_FLASH)
+          type = "sketch";
+        else // U_SPIFFS
+          type = "filesystem";
+
+        // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
+        Serial.println("Start updating " + type);
+      }).onEnd([]() {
+        Serial.println("\nEnd");
+      }).onProgress([](unsigned int progress, unsigned int total) {
+        Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+      }).onError([](ota_error_t error) {
+        Serial.printf("Error[%u]: ", error);
+        if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+        else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+        else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+        else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+        else if (error == OTA_END_ERROR) Serial.println("End Failed");
+      });
+
+    ArduinoOTA.begin();
+
+    Serial.println("Ready");
+    Serial.print("IP address: ");
+    Serial.println(WiFi.localIP());
+
+    //OTA ends
+    
+    //TIME STUFF
+    const char* ntpServer = "pool.ntp.org";
+    const long  gmtOffset_sec = 3600;
+    const int   daylightOffset_sec = 3600;
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   }
-
-  if(WiFi.status() == WL_CONNECTED) {
-    Serial.print("Connected to ");
-    Serial.println(ssid);
-    //TODO if not connected, init offline
-    curtain->initializeOnline();
-  }  
-
-  //OTA starts
-  ArduinoOTA.onStart([]() {
-      String type;
-      if (ArduinoOTA.getCommand() == U_FLASH)
-        type = "sketch";
-      else // U_SPIFFS
-        type = "filesystem";
-
-      // NOTE: if updating SPIFFS this would be the place to unmount SPIFFS using SPIFFS.end()
-      Serial.println("Start updating " + type);
-    }).onEnd([]() {
-      Serial.println("\nEnd");
-    }).onProgress([](unsigned int progress, unsigned int total) {
-      Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
-    }).onError([](ota_error_t error) {
-      Serial.printf("Error[%u]: ", error);
-      if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
-      else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
-      else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
-      else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
-      else if (error == OTA_END_ERROR) Serial.println("End Failed");
-    });
-
-  ArduinoOTA.begin();
-
-  Serial.println("Ready");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
-
-  //OTA ends
-  
-  //TIME STUFF
-  const char* ntpServer = "pool.ntp.org";
-  const long  gmtOffset_sec = 3600;
-  const int   daylightOffset_sec = 3600;
-  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
-
 
   BLEDevice::init("MyESP32");
   BLEServer *pServer = BLEDevice::createServer();
