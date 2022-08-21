@@ -69,6 +69,7 @@ void Curtain::initializeOnline() {
             Serial.println(this->ownerEmail);
             Serial.print("Read password: ");
             Serial.println(this->ownerPassword);
+            this->onlineMode = true;
         }
       } else {
         Serial.println(httpCode);

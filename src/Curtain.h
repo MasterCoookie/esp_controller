@@ -18,6 +18,8 @@ public:
     //TODO: make offline version
     void initializeOnline();
 
+    const bool isInOnlineMode() const { return this->onlineMode; }
+
     const RotorState getRotorState() const { return this->rotorState; }
     void setRotorState(const RotorState state) { this->rotorState = state; }
     void setStepperSpeed(const int speed) { this->stepper->setSpeed(speed); }
@@ -52,6 +54,8 @@ private:
     Curtain();
     unsigned long getTime();
     unsigned long epochTime;
+
+    bool onlineMode;
 
     static Curtain* curtain_;
 
