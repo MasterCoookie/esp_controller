@@ -17,6 +17,7 @@ class Curtain {
 public:
     //TODO: make offline version
     void initializeOnline();
+    void initializeOffline();
 
     const bool isInOnlineMode() const { return this->onlineMode; }
 

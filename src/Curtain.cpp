@@ -52,8 +52,6 @@ void Curtain::initializeOnline() {
                 JSONVar json = JSON.parse(payload);
                 if (JSON.typeof(json) == "undefined") {
                     Serial.println("Parsing input failed!");
-                    this->stepper->setSpeed(29);
-                    this->YPosClosed = 6000;
                 } else {
                     this->initFromJSON(json);
 
@@ -76,6 +74,11 @@ void Curtain::initializeOnline() {
             http.end(); 
         }
     }
+}
+
+void Curtain::initializeOffline() {
+    this->stepper->setSpeed(29);
+    this->YPosClosed = 6000;
 }
 
 void Curtain::initFromJSON(JSONVar& json) { 
