@@ -25,58 +25,67 @@ void Curtain::initializeOnline() {
 
     JSONVar data;
     data["MAC"] = this->BLEMAC;
+    
+    unsigned short int retry_count = 0;
+    this->onlineMode = false;
 
-    HTTPClient http;
-    http.begin(this->serverName + endpoint);
-    http.addHeader("Content-Type", "application/json");
- 
-    Serial.println(JSON.stringify(data));
-    int httpCode = http.POST(JSON.stringify(data));                                                  //Make the request
- 
-    if (httpCode > 0) { //Check for the returning code
- 
-        String payload = http.getString();
-        Serial.println(httpCode);
-        Serial.println(payload);
-
-        JSONVar json = JSON.parse(payload);
-        if (JSON.typeof(json) == "undefined") {
-            Serial.println("Parsing input failed!");
-            this->stepper->setSpeed(29);
-            this->YPosClosed = 6000;
+    while(retry_count < 4) {
+        if (WiFi.status() != WL_CONNECTED) {
+            Serial.print("Reconnecting to WiFi, attempt: ");
+            Serial.println(++retry_count);
+            WiFi.disconnect();
+            WiFi.reconnect();
         } else {
-            //tmp
-            Serial.print("Device: ");
-            Serial.println(json["device"]["name"]);
+            HTTPClient http;
+            http.begin(this->serverName + endpoint);
+            http.addHeader("Content-Type", "application/json");
+        
+            // Serial.println(JSON.stringify(data));
+            int httpCode = http.POST(JSON.stringify(data));                                                  //Make the request
+        
+            if (httpCode > 0) { //Check for the returning code
+        
+                String payload = http.getString();
+                Serial.println(httpCode);
+                Serial.println(payload);
 
-            int speed = (int)json["device"]["motorSpeed"];
-            
-            Serial.print("Speed set to: ");
-            Serial.println(speed);
-            this->stepper->setSpeed(speed);
-            this->YPosClosed = (int)json["device"]["YPosClosed"];
-            this->deviceID = json["device"]["_id"];
+                JSONVar json = JSON.parse(payload);
+                if (JSON.typeof(json) == "undefined") {
+                    Serial.println("Parsing input failed!");
+                    this->stepper->setSpeed(29);
+                    this->YPosClosed = 6000;
+                } else {
+                    //tmp
+                    Serial.print("Device: ");
+                    Serial.println(json["device"]["name"]);
 
-            //TMPdev
-            // this->ownerEmail = "jan.kocurek@proton.me";
-            // this->ownerPassword = "dupa1234";
+                    int speed = (int)json["device"]["motorSpeed"];
+                    
+                    Serial.print("Speed set to: ");
+                    Serial.println(speed);
+                    this->stepper->setSpeed(speed);
+                    this->YPosClosed = (int)json["device"]["YPosClosed"];
+                    this->deviceID = json["device"]["_id"];
 
-            this->ownerEmail = this->EEPROMRead(64);
-            this->ownerPassword = this->EEPROMRead(96);
+                    this->ownerEmail = this->EEPROMRead(64);
+                    this->ownerPassword = this->EEPROMRead(96);
 
-            //TMPdev
-            Serial.print("Read email: ");
-            Serial.println(this->ownerEmail);
-            Serial.print("Read password: ");
-            Serial.println(this->ownerPassword);
-            this->onlineMode = true;
+                    //TMPdev
+                    Serial.print("Read email: ");
+                    Serial.println(this->ownerEmail);
+                    Serial.print("Read password: ");
+                    Serial.println(this->ownerPassword);
+
+                    this->onlineMode = true;
+                    break;
+                }
+            } else {
+                Serial.println(httpCode);
+                Serial.println("Error on HTTP request");
+            }
+            http.end(); 
         }
-      } else {
-        Serial.println(httpCode);
-        Serial.println("Error on HTTP request");
     }
- 
-    http.end(); 
 }
 
 Curtain* Curtain::getInstance() {
