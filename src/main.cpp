@@ -26,8 +26,8 @@ void setup() {
 
   curtain = Curtain::getInstance();
 
-  curtain->EEPROMWrite("Maszt 5G test 300% mocy", 0);
-  curtain->EEPROMWrite("aqq123321qqa", 32);
+  // curtain->EEPROMWrite("Maszt 5G test 300% mocy", 0);
+  // curtain->EEPROMWrite("aqq123321qqa", 32);
 
 
   String ssid = curtain->EEPROMRead(0);
