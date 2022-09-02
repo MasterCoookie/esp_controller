@@ -122,7 +122,7 @@ int Curtain::makeResponselessAPICall(const String& endpoint, JSONVar& doc) {
 
 JSONVar Curtain::makeJSONResposiveAPICall(const String& endpoint, JSONVar& doc) {
     HTTPClient http;
-    JSONVar empty;
+    JSONVar empty = JSONVar("");
 
 
     Serial.println("Making http request to "+ this->serverName + endpoint);
@@ -208,7 +208,19 @@ void Curtain::checkPendingEvent() {
             int y_step = (int)this->pendingEvent["event"]["targetYpos"] - this->currentYPos;
             this->setCurrentYPos(y_step);
             this->stepperStep(y_step);
-            this->pendingEvent = JSONVar();
+            this->pendingEvent = JSONVar("");
+
+            JSONVar confrim_payload;
+            this->appendUserAuth(confrim_payload);
+            confrim_payload["eventID"] = this->pendingEvent["event"]["_id"];
+
+            const int resposne = this->makeResponselessAPICall("confirm_event_done", confrim_payload);
+            if(resposne == 200) {
+                Serial.println("Confirmed");
+            } else {
+                Serial.print("Error code: ");
+                Serial.println(resposne);
+            }
         }
     }
 }
