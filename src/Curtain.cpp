@@ -208,11 +208,13 @@ void Curtain::checkPendingEvent() {
             int y_step = (int)this->pendingEvent["event"]["targetYpos"] - this->currentYPos;
             this->setCurrentYPos(y_step);
             this->stepperStep(y_step);
-            this->pendingEvent = JSONVar("");
+            
 
             JSONVar confrim_payload;
             this->appendUserAuth(confrim_payload);
-            confrim_payload["eventID"] = this->pendingEvent["event"]["_id"];
+            String _id = JSON.stringify(this->pendingEvent["event"]["_id"]);
+            confrim_payload["eventID"] = _id.substring(1, _id.length() - 1);
+            Serial.println(_id.substring(1, _id.length() - 1));
 
             const int resposne = this->makeResponselessAPICall("confirm_event_done", confrim_payload);
             if(resposne == 200) {
@@ -221,6 +223,7 @@ void Curtain::checkPendingEvent() {
                 Serial.print("Error code: ");
                 Serial.println(resposne);
             }
+            this->pendingEvent = JSONVar("");
         }
     }
 }
