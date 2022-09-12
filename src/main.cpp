@@ -131,6 +131,8 @@ void loop() {
     } else if(curtain->isInOnlineMode()) {
       checkEventCoutner = 0;
       curtain->checkPendingEvent();
+    } else {
+      ESP.restart();
     }
 
   } else if(curtain->getRotorState() == RotorState::UP) {
