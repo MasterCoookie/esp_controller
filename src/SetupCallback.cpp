@@ -19,7 +19,18 @@ void SetupCallback::onWrite(BLECharacteristic *pCharacteristic) {
         this->curtain->setYPosClosed(this->curtain->getYPosClosed() - this->curtain->getCurrentYPos());
         this->curtain->resetCurrentYPos();
       } else if(value == "C") {
+        //set current pos as closed
         this->curtain->setYPosClosed(this->curtain->getCurrentYPos());
+        
+        JSONVar payload;
+        payload["YPosClosed"] = this->curtain->getYPosClosed();
+        this->curtain->appendUserAuth(payload);
+        const int response = this->curtain->makeResponselessAPICall("update_device/", payload);
+        if(response == 200) {
+          Serial.println("YPosClosed changed in API");
+        } else {
+          Serial.println(response);
+        }
       }
     } else if (value.length() > 1) {
       Serial.println(value[0]);
