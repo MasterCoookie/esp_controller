@@ -150,8 +150,10 @@ void loop() {
   } else if(curtain->getRotorState() == RotorState::OPEN) {
     curtain->stepperStep(-curtain->getCurrentYPos());
     curtain->resetCurrentYPos();
+    curtain->setRotorState(RotorState::STOP);
   } else if(curtain->getRotorState() == RotorState::CLOSE) {
     curtain->stepperStep(curtain->getYPosClosed() - curtain->getCurrentYPos());
     curtain->setCurrentYPos(curtain->getYPosClosed());
+    curtain->setRotorState(RotorState::STOP);
   }
 }
