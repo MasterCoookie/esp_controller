@@ -14,6 +14,9 @@ Curtain* curtain;
 unsigned short int checkEventCoutner = 0;
 unsigned short int retryCounter = 0;
 
+BLEServer* pServer;
+BLEAdvertising* pAdvertising;
+
 void setup() {
   // initialize the serial port
   Serial.begin(115200);
@@ -95,7 +98,7 @@ void setup() {
   }
 
   BLEDevice::init("MyESP32");
-  BLEServer *pServer = BLEDevice::createServer();
+  pServer = BLEDevice::createServer();
 
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
@@ -106,7 +109,7 @@ void setup() {
 
   pService->start();
 
-  BLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising = pServer->getAdvertising();
   pAdvertising->start();
 
   Serial.println("Setup complete");
@@ -115,6 +118,10 @@ void setup() {
 void loop() {
   if(WiFi.status() == WL_CONNECTED) {
     ArduinoOTA.handle();
+  }
+
+  if(pServer->getConnectedCount() == 0) {
+    pAdvertising->start();
   }
 
   if(curtain->getRotorState() == RotorState::STOP) {
