@@ -136,8 +136,13 @@ void loop() {
     if(checkEventCoutner < 100) {
       ++checkEventCoutner;
     } else if(curtain->isInOnlineMode()) {
-      checkEventCoutner = 0;
-      curtain->checkPendingEvent();
+      if(WiFi.status() == WL_CONNECTED) {
+        checkEventCoutner = 0;
+        curtain->checkPendingEvent();
+      } else {
+        WiFi.disconnect();
+        WiFi.reconnect();
+      }      
     } else {
       ESP.restart();
     }
