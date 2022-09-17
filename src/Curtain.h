@@ -21,16 +21,16 @@ public:
     const bool isInOnlineMode() const { return this->onlineMode; }
 
     const RotorState getRotorState() const { return this->rotorState; }
-    void setRotorState(const RotorState state) { this->rotorState = state; }
+    void setRotorState(const RotorState& state) { this->rotorState = state; }
     //sets stepper speed in RPM, only works up to around 30rpm
-    void setStepperSpeed(const int speed) { this->stepper->setSpeed(speed); }
+    void setStepperSpeed(const int& speed) { this->stepper->setSpeed(speed); }
 
     void stepperStep(const int& step) { this->stepper->step(step); }
     //custom method used to turn off all stepper coils in order to save power and avoid overheating
     void stepperPowerOff();
 
     const bool getConfigMode() const { return this->configMode; }
-    void setConfigMode(const bool mode) { this->configMode = mode; }
+    void setConfigMode(const bool& mode) { this->configMode = mode; }
 
     const int getCurrentYPos() const { return this->currentYPos; }
     void resetCurrentYPos() { this->currentYPos = 0; }
