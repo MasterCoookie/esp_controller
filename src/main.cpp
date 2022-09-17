@@ -137,14 +137,14 @@ void loop() {
       ++checkEventCoutner;
     } else if(curtain->isInOnlineMode()) {
       if(WiFi.status() == WL_CONNECTED) {
-        checkEventCoutner = 0;
         curtain->checkPendingEvent();
       } else {
         WiFi.disconnect();
         WiFi.reconnect();
-      }      
+      }
+      checkEventCoutner = 0;
     } else {
-      ESP.restart();
+      //ESP.restart();
     }
 
   } else if(curtain->getRotorState() == RotorState::UP) {
