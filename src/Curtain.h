@@ -22,9 +22,11 @@ public:
 
     const RotorState getRotorState() const { return this->rotorState; }
     void setRotorState(const RotorState state) { this->rotorState = state; }
+    //sets stepper speed in RPM, only works up to around 30rpm
     void setStepperSpeed(const int speed) { this->stepper->setSpeed(speed); }
 
     void stepperStep(const int& step) { this->stepper->step(step); }
+    //custom method used to turn off all stepper coils in order to save power and avoid overheating
     void stepperPowerOff();
 
     const bool getConfigMode() const { return this->configMode; }
@@ -59,7 +61,9 @@ public:
     //reads data from EEPROM starting form given address
     String EEPROMRead(unsigned short int startingAddr);
 private:
+    //constructor, private cos singleton
     Curtain();
+    //initializes a lot of basic fields from API JSON
     void initFromJSON(JSONVar& json);
     unsigned long getTime();
     unsigned long epochTime;
@@ -68,15 +72,20 @@ private:
 
     static Curtain* curtain_;
 
+    //user credentials
     String ownerEmail;
     String ownerPassword;
 
+    //currently used API address
     String serverName;
+    //device physical address
     String BLEMAC;
+    //device API ID
     String deviceID;
 
     RotorState rotorState;
 
+    //currently queued event
     JSONVar pendingEvent;
 
     int YPosClosed;
