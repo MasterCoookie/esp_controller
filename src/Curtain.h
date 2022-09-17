@@ -15,7 +15,6 @@ enum class RotorState { UP, STOP, DOWN, OPEN, CLOSE };
 
 class Curtain {
 public:
-    //TODO: make offline version
     void initializeOnline();
     void initializeOffline();
 
