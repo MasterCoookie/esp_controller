@@ -38,17 +38,25 @@ public:
     const int getYPosClosed() const { return this->YPosClosed; }
     void setYPosClosed(const int& y) { this->YPosClosed = y; }
 
+    //makes API call, returns only HTTP status code
     int makeResponselessAPICall(const String& endpoint, JSONVar& payload);
+    //makes API call, returns JSON response
     JSONVar makeJSONResposiveAPICall(const String& endpoint, JSONVar& payload);
+    //append user credentials and device id to JSON passed by reference
     void appendUserAuth(JSONVar& doc);
 
+    //decodes string which contains user auth, then writes it to EEPROM
     void setOwnerCredentials(const std::string& s);
 
+    //Singleton getter
     static Curtain* getInstance();
 
+    //make API call that checks if there is an event to happen soon. Also, if event is already queued on device, this method will run it when the time comes
     void checkPendingEvent();
 
+    //writes given data to EEPROM starting form given address
     void EEPROMWrite(const char* data, unsigned short int startingAddrr);
+    //reads data from EEPROM starting form given address
     String EEPROMRead(unsigned short int startingAddr);
 private:
     Curtain();
